@@ -257,6 +257,7 @@ td.num{font-family:var(--mono);font-size:11.5px;}
 .btn.danger:hover{background:#F7DDDB;}
 .typing{display:inline-block;width:6px;height:13px;background:var(--brand-2);vertical-align:-2px;animation:blink .9s steps(1) infinite;}
 @keyframes blink{50%{opacity:0;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 
 /* modal */
 .mask{position:fixed;inset:0;background:rgba(15,23,32,.34);display:none;align-items:center;justify-content:center;z-index:80;padding:24px;}
@@ -372,6 +373,87 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
 .phm-warn .wt span{font-size:11.5px;color:var(--ink-2);}
 @media (max-width:1100px){.phm-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media (max-width:900px){.vis-grid,.ac-grid,.phm-grid{grid-template-columns:minmax(0,1fr);}.phm-tools input[type=range]{min-width:120px;}}
+/* ---------- 现场模式（手套 / 嘈杂环境） ---------- */
+#view-field{padding:16px 20px;overflow-y:auto;}
+.field-note{font-size:12px;color:var(--ink-3);margin-bottom:14px;line-height:1.7;}
+.field-note b{color:var(--ink);}
+.field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:860px;}
+.act-big{border-radius:14px;min-height:132px;border:none;cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;font-family:inherit;position:relative;overflow:hidden;
+  transition:transform .08s ease, box-shadow .15s ease;user-select:none;-webkit-user-select:none;touch-action:none;}
+.act-big:active{transform:scale(.985);}
+.act-big svg{width:34px;height:34px;stroke-width:1.8;}
+.act-big .t{font-size:21px;font-weight:700;letter-spacing:2px;}
+.act-big .s{font-size:12px;opacity:.8;}
+.act-stop{background:#C33C37;color:#fff;grid-column:1 / -1;min-height:150px;box-shadow:0 10px 26px -12px rgba(195,60,55,.65);}
+.act-stop svg{width:42px;height:42px;}
+.act-stop .t{font-size:26px;letter-spacing:6px;}
+.act-report{background:var(--brand);color:#fff;box-shadow:0 10px 26px -14px rgba(18,85,143,.6);}
+.act-expert{background:#0F7A5C;color:#fff;box-shadow:0 10px 26px -14px rgba(15,122,92,.6);}
+.act-voice{background:#B87400;color:#fff;grid-column:1 / -1;min-height:110px;box-shadow:0 10px 26px -14px rgba(184,116,0,.6);}
+.act-stop.disabled{background:#8f4440;cursor:not-allowed;opacity:.75;}
+.hold-bar{position:absolute;left:0;bottom:0;top:auto;width:0%;height:6px;background:rgba(255,255,255,.92);transition:width .1s linear;}
+.hold-tip{position:absolute;bottom:10px;font-size:11px;opacity:.85;letter-spacing:1px;}
+.field-voice-log{margin-top:18px;max-width:860px;}
+.field-voice-log h4{font-size:12px;color:var(--ink-2);margin:0 0 8px;font-weight:600;}
+.vlog{display:flex;flex-direction:column;gap:6px;}
+.vlog .row{display:flex;align-items:center;gap:10px;font-size:12px;padding:8px 12px;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:9px;animation:fadeUp .3s ease;}
+.vlog .row .ic{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  background:var(--brand-soft);color:var(--brand);}
+.vlog .row .txt{flex:1;min-width:0;}
+.vlog .row .txt b{display:block;font-size:12.5px;}
+.vlog .row .txt span{color:var(--ink-3);font-size:11px;}
+.vlog .row .st{flex:none;font-size:11px;color:var(--green);}
+.field-banner{display:none;max-width:860px;margin-bottom:14px;padding:12px 16px;border-radius:11px;
+  background:var(--red-soft);color:var(--red);font-size:13px;font-weight:600;line-height:1.6;
+  border:1px solid rgba(195,60,55,.35);}
+.field-banner.on{display:block;animation:fadeUp .3s ease;}
+
+/* 全局语音悬浮按钮 */
+.mic-fab{position:fixed;left:20px;bottom:24px;z-index:46;width:56px;height:56px;border-radius:50%;border:none;
+  cursor:pointer;background:var(--surface);color:var(--ink-2);box-shadow:0 10px 30px -10px rgba(16,26,36,.35),
+  0 0 0 1px var(--line);display:flex;align-items:center;justify-content:center;transition:all .2s ease;}
+.mic-fab svg{width:24px;height:24px;stroke-width:1.8;}
+.mic-fab:hover{color:var(--brand);box-shadow:0 10px 30px -10px rgba(16,26,36,.35),0 0 0 1px var(--brand);}
+.mic-fab.hot{background:var(--brand);color:#fff;animation:micPulse 1.6s ease infinite;}
+@keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(18,85,143,.45);}70%{box-shadow:0 0 0 14px rgba(18,85,143,0);}100%{box-shadow:0 0 0 0 rgba(18,85,143,0);}}
+
+/* 语音浮层 */
+.voice-ov{position:fixed;inset:0;z-index:80;background:rgba(10,17,26,.82);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;}
+.voice-ov.on{display:flex;animation:fadeUp .18s ease;}
+.voice-card{width:min(620px,92vw);background:var(--surface);border-radius:18px;padding:26px 28px 22px;
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.6);border:1px solid var(--line);}
+.voice-ph{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.voice-ph .dotv{width:10px;height:10px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite;}
+.voice-ph.wake .dotv{background:var(--brand);}
+.voice-ph .lb{font-size:13px;font-weight:600;color:var(--ink-2);}
+.voice-hint{font-size:12px;color:var(--ink-3);margin-bottom:16px;}
+.voice-wave{display:flex;align-items:center;justify-content:center;gap:5px;height:64px;margin-bottom:14px;
+  background:var(--surface-2);border-radius:12px;overflow:hidden;}
+.voice-wave i{width:5px;border-radius:3px;background:var(--brand);height:12px;animation:wv 1s ease-in-out infinite;}
+@keyframes wv{0%,100%{height:10px;}50%{height:46px;}}
+.voice-txt{min-height:52px;border-radius:11px;background:var(--surface-2);padding:12px 14px;font-size:15px;
+  color:var(--ink);margin-bottom:14px;line-height:1.6;}
+.voice-txt.dim{color:var(--ink-3);font-size:13px;}
+.voice-txt .wake{color:var(--brand);font-weight:700;}
+.voice-demo{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.voice-demo .lb2{width:100%;font-size:11px;color:var(--ink-3);margin-bottom:-2px;}
+.voice-demo button{border:1px solid var(--line);background:var(--surface-2);border-radius:99px;padding:7px 13px;
+  font-size:12px;cursor:pointer;color:var(--ink-2);font-family:inherit;transition:all .15s;}
+.voice-demo button:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-soft);}
+.voice-foot{display:flex;justify-content:space-between;align-items:center;}
+.voice-foot .esc{font-size:11px;color:var(--ink-3);}
+.voice-foot .clo{border:none;background:var(--surface-3);border-radius:9px;padding:9px 18px;font-size:13px;
+  cursor:pointer;color:var(--ink);font-family:inherit;}
+.voice-foot .clo:hover{background:var(--line);}
+
+@media (max-width:768px){
+  .field-grid{grid-template-columns:1fr;}
+  .act-big{min-height:104px;}
+  .act-stop{min-height:124px;}
+}
 </style>
 </head>
 <body>
@@ -415,6 +497,9 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
       </button>
       <button class="rail-btn" data-view="phm" title="健康预测 PHM">
         <svg viewBox="0 0 24 24"><path d="M3 13h3.5l2.2-5.5 3 10.5 2.3-7 1.7 2h5"/><path d="M3 20.5h18"/></svg>
+      </button>
+      <button class="rail-btn" data-view="field" title="现场模式">
+        <svg viewBox="0 0 24 24"><path d="M12 3v10.5"/><path d="M8.5 6.5L12 3l3.5 3.5"/><path d="M6 11.5L4 13.5c2.5 3.5 5 5 8 5s5.5-1.5 8-5l-2-2"/><path d="M4.5 20.5h15"/></svg>
       </button>
       <button class="rail-btn" data-view="tasks" title="检测任务">
         <svg viewBox="0 0 24 24"><path d="M9 5h9M9 12h9M9 19h9M4.5 5l1 1 1.6-1.8M4.5 12l1 1 1.6-1.8M4.5 19l1 1 1.6-1.8"/></svg>
@@ -605,6 +690,42 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
         <div id="phmWarn"></div>
       </section>
 
+      <section class="view" id="view-field">
+        <div class="field-banner" id="fieldBanner"></div>
+        <div class="field-note">
+          <b>现场模式</b> · 面向戴手套、嘈杂环境的地面作业场景：全部触控目标 ≥ 88px，单手可及；
+          语音指令走<b>离线唤醒词「小运小运」</b>，不打字、不精确点击。危险动作（紧急停机）需<b>长按 3 秒</b>，防止误触。
+        </div>
+        <div class="field-grid">
+          <button class="act-big act-stop" id="actStop">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="5" width="14" height="14" rx="2.5"/><path d="M9.5 9.5h5v5h-5z" fill="currentColor" stroke="none"/></svg>
+            <span class="t">紧急停机</span>
+            <span class="s">长按 3 秒生效 · 影响当前车组（<span id="stopTrain">CRH-380B / 03</span>）</span>
+            <span class="hold-bar" id="holdBar"></span>
+            <span class="hold-tip" id="holdTip">按住不动以确认 · 松开取消</span>
+          </button>
+          <button class="act-big act-report" id="actReport">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3.5h9l4 4v13a1 1 0 01-1 1H6a1 1 0 01-1-1v-16a1 1 0 011-1z"/><path d="M14.5 3.5V8H19M9 13h6M9 16.5h6M9 9.5h2"/></svg>
+            <span class="t">生成报告</span>
+            <span class="s">一键生成当前车组运维日报</span>
+          </button>
+          <button class="act-big act-expert" id="actExpert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 20c.6-3.4 2.8-5.2 5.5-5.2s4.9 1.8 5.5 5.2"/><path d="M16.5 6.5l4 4M20.5 6.5l-4 4"/></svg>
+            <span class="t">呼叫专家</span>
+            <span class="s">转接轮值工程师 · 30 秒内响应</span>
+          </button>
+          <button class="act-big act-voice" id="actVoice">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M9 21h6"/></svg>
+            <span class="t">语音唤醒</span>
+            <span class="s">唤醒词「小运小运」· 支持离线指令 · 任意页面可用（快捷键 Alt+V）</span>
+          </button>
+        </div>
+        <div class="field-voice-log">
+          <h4>语音指令记录</h4>
+          <div class="vlog" id="vlog"><div class="row" style="opacity:.55"><span class="ic">···</span><span class="txt"><b>暂无指令</b><span>唤醒后说出的指令会显示在这里</span></span></div></div>
+        </div>
+      </section>
+
       <div class="composer">
         <div class="chips">
           <button class="chip" data-flow="report">生成今日检修建议</button>
@@ -637,6 +758,26 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
 </div>
 
 <button class="agent-fab" id="agentFab">智能体</button>
+
+<button class="mic-fab" id="micFab" title="语音唤醒（Alt+V）">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M9 21h6"/></svg>
+</button>
+
+<div class="voice-ov" id="voiceOv">
+  <div class="voice-card">
+    <div class="voice-ph" id="voicePh"><span class="dotv"></span><span class="lb" id="voiceLb">正在聆听唤醒词</span></div>
+    <div class="voice-hint" id="voiceHint">唤醒词：<b>「小运小运」</b> · 识别引擎：离线（本地模型，无网络可用）</div>
+    <div class="voice-wave" id="voiceWave"></div>
+    <div class="voice-txt dim" id="voiceTxt">请说出唤醒词…</div>
+    <div class="voice-demo" id="voiceDemo">
+      <span class="lb2">浏览器未授权麦克风时，可点下方指令模拟语音输入（走同一解析链路）：</span>
+    </div>
+    <div class="voice-foot">
+      <span class="esc">Esc 关闭</span>
+      <button class="clo" id="voiceClo">关闭</button>
+    </div>
+  </div>
+</div>
 
 <div class="mask" id="mask">
   <div class="modal">
@@ -1914,6 +2055,343 @@ init();
   });
 
   greet();
+})();
+</script>
+<script>
+/* ================= 现场模式：语音唤醒 + 一键式操作 ================= */
+(function(){
+  const $ = function (s, c) { return (c || document).querySelector(s); };
+  const $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* ---------- 语音浮层 ---------- */
+  const OV = $('#voiceOv'), PH = $('#voicePh'), LB = $('#voiceLb'),
+        HINT = $('#voiceHint'), TXT = $('#voiceTxt'), DEMO = $('#voiceDemo');
+  let phase = 'wake';          /* wake -> cmd */
+  let rec = null, recTimer = null;
+
+  const CMDS = [
+    { t: '小运小运', wake: true },
+    { t: '报告3号车厢2轴温度异常' },
+    { t: '调出上个月的维保记录' },
+    { t: '紧急停机' },
+    { t: '生成今天的检修报告' },
+    { t: '呼叫专家' }
+  ];
+
+  function buildWave(){
+    const w = $('#voiceWave');
+    w.innerHTML = '';
+    for (let i = 0; i < 26; i++){
+      const b = document.createElement('i');
+      b.style.animationDelay = (Math.random() * 1.2).toFixed(2) + 's';
+      b.style.animationDuration = (0.6 + Math.random() * 0.9).toFixed(2) + 's';
+      w.appendChild(b);
+    }
+  }
+
+  function buildDemo(){
+    DEMO.innerHTML = '<span class="lb2">浏览器未授权麦克风时，点下方指令模拟语音输入（与真实识别走同一条解析链路）：</span>';
+    CMDS.forEach(function (c){
+      const b = document.createElement('button');
+      b.textContent = '“' + c.t + '”';
+      b.addEventListener('click', function (){
+        if (phase === 'wake' && !c.wake){ flashHint('请先说唤醒词「小运小运」'); return; }
+        if (phase === 'cmd' && c.wake){ flashHint('已在聆听指令，请直接说指令'); return; }
+        handleUtterance(c.t);
+      });
+      DEMO.appendChild(b);
+    });
+  }
+
+  function flashHint(msg){
+    HINT.innerHTML = '<b style="color:var(--amber)">' + msg + '</b>';
+    setTimeout(function () { HINT.innerHTML = baseHint(); }, 1600);
+  }
+  function baseHint(){ return phase === 'wake'
+    ? '唤醒词：<b>「小运小运」</b> · 识别引擎：离线（本地模型，无网络可用）'
+    : '已唤醒 · 请说出指令（例如「报告3号车厢2轴温度异常」）'; }
+
+  function setPhase(p){
+    phase = p;
+    PH.classList.toggle('wake', p === 'cmd');
+    LB.textContent = p === 'wake' ? '正在聆听唤醒词' : '已唤醒 · 聆听指令';
+    TXT.className = 'voice-txt dim';
+    TXT.innerHTML = p === 'wake' ? '请说出唤醒词…' : '请讲…';
+    HINT.innerHTML = baseHint();
+  }
+
+  function openVoice(){
+    OV.classList.add('on');
+    $('#micFab').classList.add('hot');
+    setPhase('wake');
+    buildWave(); buildDemo();
+    startRec();
+  }
+  function closeVoice(){
+    OV.classList.remove('on');
+    $('#micFab').classList.remove('hot');
+    stopRec();
+  }
+
+  /* 真实离线/在线识别（浏览器支持且授权时启用；失败自动降级为演示指令） */
+  function startRec(){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR){ HINT.innerHTML = baseHint() + '<br>当前浏览器不支持语音识别，已切换为离线指令面板。'; return; }
+    try {
+      rec = new SR();
+      rec.lang = 'zh-CN'; rec.continuous = true; rec.interimResults = true;
+      rec.onresult = function (e){
+        const r = e.results[e.results.length - 1];
+        const text = (r[0].transcript || '').trim();
+        if (!text) return;
+        TXT.className = 'voice-txt';
+        TXT.textContent = '“' + text + '”';
+        if (r.isFinal) handleUtterance(text);
+      };
+      rec.onerror = function (ev){
+        if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){
+          HINT.innerHTML = baseHint() + '<br>麦克风未授权，已切换为离线指令面板（点下方指令模拟）。';
+          stopRec();
+        }
+      };
+      rec.start();
+    } catch (e){ rec = null; }
+  }
+  function stopRec(){
+    if (rec){ try { rec.stop(); } catch (e){} rec = null; }
+    clearTimeout(recTimer);
+  }
+
+  /* 唤醒词 → 指令 的统一入口 */
+  function handleUtterance(text){
+    if (phase === 'wake'){
+      if (/小运|唤醒|在吗/.test(text)){
+        setPhase('cmd');
+        TXT.className = 'voice-txt';
+        TXT.innerHTML = '<span class="wake">“小运小运”</span> · 已唤醒，请讲指令';
+        beep(880, 0.09);
+      } else {
+        flashHint('未检测到唤醒词，请先说「小运小运」');
+      }
+      return;
+    }
+    closeVoice();
+    beep(1180, 0.07);
+    execVoice(text);
+    setPhase('wake'); /* 下次重新等唤醒 */
+  }
+
+  /* ---------- 指令解析（离线语法，纯本地规则） ---------- */
+  function execVoice(text){
+    const s = text.replace(/\s/g, '');
+
+    if (/紧急停机|立即停车|停车|停机/.test(s)){
+      logVoice(text, '紧急停机指令 → 二次确认');
+      confirmStop('voice');
+      return;
+    }
+    if (/调出|查看|打开|查|看看|给我/.test(s) && /(维保|维修|保养|检修|维护)/.test(s) && /(记录|工单|历史|上月|上个月|档案)/.test(s)){
+      logVoice(text, '检索维保记录（近 30 天）');
+      showMaintRecords();
+      return;
+    }
+    if (/维保|维修|保养|检修/.test(s) && /记录|工单/.test(s)){
+      logVoice(text, '检索维保记录（近 30 天）');
+      showMaintRecords();
+      return;
+    }
+    if (/上个月/.test(s) && /记录|工单|维保/.test(s)){
+      logVoice(text, '检索维保记录（近 30 天）');
+      showMaintRecords();
+      return;
+    }
+    if (/(温度|温升|发热)/.test(s) || (/报告/.test(s) && /轴/.test(s)) || /(\d+)号?(车厢|车|位)/.test(s) && /轴/.test(s)){
+      logVoice(text, '播报 2 轴轴箱状态 → 触发诊断');
+      switchView('dash');
+      runDiag('E1');
+      return;
+    }
+    if (/异响|声纹|声音/.test(s)){
+      logVoice(text, '声纹复核 → 2 轴轴箱');
+      switchView('acoustic');
+      return;
+    }
+    if (/寿命|RUL|闸片|磨耗/.test(s)){
+      logVoice(text, 'PHM 查询 → 制动闸片');
+      switchView('phm');
+      return;
+    }
+    if (/生成|做|出|导出/.test(s) && /报告|日报/.test(s)){
+      logVoice(text, '一键生成运维日报');
+      switchView('dash');
+      runFlow(FLOWS.report);
+      return;
+    }
+    if (/呼叫|叫|找|联系|转接/.test(s) && /专家|工程师|人工|人/.test(s)){
+      logVoice(text, '呼叫轮值专家');
+      callExpert();
+      return;
+    }
+    /* 兜底：交给对话智能体 */
+    logVoice(text, '转对话智能体');
+    switchView('dash');
+    appendUser(text);
+    runFlow(route(text));
+  }
+
+  function logVoice(text, action){
+    const log = $('#vlog');
+    const empty = log.querySelector('.row[style]');
+    if (empty) empty.remove();
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = '<span class="ic"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0"/></svg></span>' +
+      '<span class="txt"><b>“' + text.replace(/</g, '&lt;') + '”</b><span>' + action + ' · ' + new Date().toTimeString().slice(0, 5) + '</span></span>' +
+      '<span class="st">已执行</span>';
+    log.insertBefore(row, log.firstChild);
+    while (log.children.length > 6) log.removeChild(log.lastChild);
+  }
+
+  /* ---------- 声音反馈（嘈杂环境用短促高频提示音） ---------- */
+  let actx = null;
+  function beep(freq, dur){
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.frequency.value = freq; o.type = 'sine';
+      g.gain.setValueAtTime(0.08, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + dur);
+    } catch (e){}
+  }
+
+  /* ---------- 紧急停机：长按 3 秒 + 弹窗二次确认 ---------- */
+  const STOP = $('#actStop'), BAR = $('#holdBar'), TIP = $('#holdTip');
+  let holdT = null, holdStart = 0, stopped = false;
+
+  function holdBegin(e){
+    if (stopped) { toast('已处于停机状态，等待调度复位'); return; }
+    e.preventDefault();
+    holdStart = Date.now();
+    TIP.textContent = '保持按住…' ;
+    holdT = setInterval(function (){
+      const p = Math.min((Date.now() - holdStart) / 3000, 1);
+      BAR.style.width = (p * 100) + '%';
+      if (p >= 1){ holdEnd(); confirmStop('hold'); }
+    }, 60);
+  }
+  function holdEnd(){
+    clearInterval(holdT); holdT = null;
+    BAR.style.width = '0%';
+    if (!stopped) TIP.textContent = '按住不动以确认 · 松开取消';
+  }
+  STOP.addEventListener('pointerdown', holdBegin);
+  STOP.addEventListener('pointerup', holdEnd);
+  STOP.addEventListener('pointerleave', holdEnd);
+  STOP.addEventListener('pointercancel', holdEnd);
+
+  function openCustom(title, html){
+    $('#modalTitle').textContent = title;
+    $('#modalBody').innerHTML = html;
+    $('#mask').classList.add('on');
+  }
+
+  function confirmStop(src){
+    const name = state.train;
+    openCustom('⚠️ 紧急停机确认', 
+      '<div class="q">即将对 <b>' + name + '</b> 下发紧急停机指令</div>' +
+      '<h4>影响范围</h4>当前交路中断 · 库内断电 · 已生成事件记录并通知调度台<br>' +
+      '<h4>触发来源</h4>' + (src === 'voice' ? '语音指令（已通过声纹比对：值班员 张工）' : '现场模式长按确认（工号 10457）') +
+      '<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:18px">' +
+      '<button id="esCancel" style="border:1px solid var(--line);background:var(--surface-2);border-radius:9px;padding:10px 22px;font-size:14px;cursor:pointer;font-family:inherit">取消</button>' +
+      '<button id="esOk" style="border:none;background:#C33C37;color:#fff;border-radius:9px;padding:10px 22px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:600">确认停机</button></div>');
+    $('#esCancel').addEventListener('click', function (){ $('#mask').classList.remove('on'); });
+    $('#esOk').addEventListener('click', function (){
+      $('#mask').classList.remove('on');
+      doStop();
+    });
+  }
+
+  function doStop(){
+    stopped = true;
+    const name = state.train;
+    const banner = $('#fieldBanner');
+    banner.classList.add('on');
+    banner.innerHTML = '⛔ <b>' + name + '</b> 已执行紧急停机 · ' + new Date().toTimeString().slice(0, 5) +
+      ' · 指令来源已留痕（工号 10457） · 等待调度复位';
+    STOP.classList.add('disabled');
+    STOP.querySelector('.t').textContent = '已停机';
+    TIP.textContent = '等待调度复位';
+    toast('停机指令已下发至 TCMS，事件已上报调度台');
+    beep(520, 0.25);
+    botSay('<b style="color:var(--red)">紧急停机已执行</b>（' + name + '）。<br>' +
+      '· 指令链路：现场模式 → TCMS → 调度台，全程留痕<br>' +
+      '· 已自动生成高优先级事件 EV-STOP-' + Math.floor(Math.random() * 900 + 100) +
+      '<br>· 建议动作：通知车站值班员、安排库内检查走行部与制动系统<br>' +
+      '复位操作需调度台授权后，在现场模式重新长按「复位」。');
+  }
+
+  /* ---------- 一键报告 / 呼叫专家 ---------- */
+  $('#actReport').addEventListener('click', function (){
+    logVoice('（一键）生成报告', '现场模式大按钮 → 运维日报');
+    switchView('dash');
+    runFlow(FLOWS.report);
+  });
+
+  function callExpert(){
+    openCustom('呼叫轮值专家', 
+      '<div class="q">走行部专业 · 轮值专家 王建国（高级工程师）</div>' +
+      '<h4>呼叫中</h4><div id="exStat" style="font-size:13px;color:var(--ink-2)">正在通过工单系统 + IP 话机双通道呼叫…（预计 30 秒内响应）</div>' +
+      '<h4>将同步给专家的上下文</h4>当前车组告警摘要 · 2 轴轴箱诊断结论 · 最近 3 张相关工单 · 本次会话推理链');
+    const st = $('#exStat');
+    setTimeout(function (){ if (st) st.innerHTML = '<b style="color:var(--green)">已接通</b> · 通话中（本次通话将自动生成转写纪要并归档到工单）'; }, 2600);
+    botSay('已发起专家呼叫：<b>王建国（走行部 · 高级工程师）</b>。接通后将同步当前诊断上下文，通话纪要自动归档。');
+  }
+  $('#actExpert').addEventListener('click', function (){
+    logVoice('（一键）呼叫专家', '轮值专家 王建国 · 双通道呼叫');
+    callExpert();
+  });
+
+  /* ---------- 维保记录 ---------- */
+  function showMaintRecords(){
+    switchView('orders');
+    openCustom('维保记录 · 近 30 天（' + state.train + '）',
+      '<div class="q">共 14 条记录 · 已完成 12 · 进行中 2</div>' +
+      '<h4>重点工单</h4><table>' +
+      '<tr><td>WO-4821</td><td>2 轴轴箱轴承更换</td><td>08-12 完成</td></tr>' +
+      '<tr><td>WO-4796</td><td>制动闸片三级修</td><td>09-28 完成</td></tr>' +
+      '<tr><td>WO-4853</td><td>齿轮箱换油</td><td>10-14 完成</td></tr>' +
+      '<tr><td>WO-4901</td><td>塞拉门密封条更换</td><td>进行中</td></tr></table>' +
+      '<h4>统计</h4>总工时 87.5h · 平均处理时长 6.2h · 一次修复率 92% · 重复故障 1 项（2 轴轴箱）');
+    botSay('已调出 <b>' + state.train + '</b> 近 30 天维保记录：14 条，重点包括 2 轴轴箱轴承更换（08-12）、制动闸片三级修（09-28）。' +
+      '其中 2 轴轴箱为重复故障项，已在本页上方标出，建议结合当前告警一起看。');
+  }
+
+  /* ---------- 视图与车组联动 ---------- */
+  function syncField(){
+    $('#stopTrain').textContent = state.train;
+  }
+  const _sw = switchView;
+  switchView = function (v){
+    _sw(v);
+    if (v === 'field') syncField();
+  };
+  syncField();
+
+  /* ---------- 全局入口与快捷键 ---------- */
+  $('#micFab').addEventListener('click', openVoice);
+  $('#actVoice').addEventListener('click', function (){
+    logVoice('（一键）语音唤醒', '打开离线语音面板');
+    openVoice();
+  });
+  $('#voiceClo').addEventListener('click', closeVoice);
+  OV.addEventListener('click', function (e){ if (e.target === OV) closeVoice(); });
+
+  document.addEventListener('keydown', function (e){
+    if (e.altKey && (e.key === 'v' || e.key === 'V')){ e.preventDefault(); OV.classList.contains('on') ? closeVoice() : openVoice(); }
+    if (e.key === 'Escape' && OV.classList.contains('on')) closeVoice();
+  });
 })();
 </script>
 </body>
