@@ -81,10 +81,10 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border
   display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;
 }
 .rail-btn{
-  width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  width:44px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;
   color:var(--ink-3);position:relative;transition:background .15s,color .15s;
+  font-size:12px;font-weight:500;letter-spacing:1.5px;padding-left:1.5px;
 }
-.rail-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
 .rail-btn:hover{background:var(--surface-3);color:var(--ink);}
 .rail-btn.on{background:var(--brand-soft);color:var(--brand);}
 .rail-btn.on::before{content:"";position:absolute;left:-8px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--brand);}
@@ -486,34 +486,16 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
 
   <div class="body">
     <nav class="rail">
-      <button class="rail-btn on" data-view="dash" title="监测看板">
-        <svg viewBox="0 0 24 24"><path d="M4 19V10M9.5 19V5M15 19v-6M20.5 19v-9"/></svg>
-      </button>
-      <button class="rail-btn" data-view="vision" title="视觉检测">
-        <svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6.2 9.5-6.2S21.5 12 21.5 12s-3.5 6.2-9.5 6.2S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3.1"/></svg>
-      </button>
-      <button class="rail-btn" data-view="acoustic" title="声纹分析">
-        <svg viewBox="0 0 24 24"><path d="M3.5 10v4M7.5 6.5v11M11.5 3.5v17M15.5 6.5v11M19.5 10v4"/></svg>
-      </button>
-      <button class="rail-btn" data-view="phm" title="健康预测 PHM">
-        <svg viewBox="0 0 24 24"><path d="M3 13h3.5l2.2-5.5 3 10.5 2.3-7 1.7 2h5"/><path d="M3 20.5h18"/></svg>
-      </button>
-      <button class="rail-btn" data-view="field" title="现场模式">
-        <svg viewBox="0 0 24 24"><path d="M12 3v10.5"/><path d="M8.5 6.5L12 3l3.5 3.5"/><path d="M6 11.5L4 13.5c2.5 3.5 5 5 8 5s5.5-1.5 8-5l-2-2"/><path d="M4.5 20.5h15"/></svg>
-      </button>
-      <button class="rail-btn" data-view="tasks" title="检测任务">
-        <svg viewBox="0 0 24 24"><path d="M9 5h9M9 12h9M9 19h9M4.5 5l1 1 1.6-1.8M4.5 12l1 1 1.6-1.8M4.5 19l1 1 1.6-1.8"/></svg>
-      </button>
-      <button class="rail-btn" data-view="orders" title="检修工单">
-        <svg viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 011 1v15l-3-2-3 2-3-2-3 2V5a1 1 0 011-1z"/><path d="M9.5 9h5M9.5 13h5"/></svg>
-      </button>
-      <button class="rail-btn" data-view="know" title="知识库">
-        <svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 015.5 4H10v16H5.5A1.5 1.5 0 014 18.5zM20 5.5A1.5 1.5 0 0018.5 4H14v16h4.5a1.5 1.5 0 001.5-1.5z"/></svg>
-      </button>
+      <button class="rail-btn on" data-view="dash" title="监测看板">监测</button>
+      <button class="rail-btn" data-view="vision" title="视觉检测">视觉</button>
+      <button class="rail-btn" data-view="acoustic" title="声纹分析">声纹</button>
+      <button class="rail-btn" data-view="phm" title="健康预测 PHM">预测</button>
+      <button class="rail-btn" data-view="field" title="现场模式">现场</button>
+      <button class="rail-btn" data-view="tasks" title="检测任务">任务</button>
+      <button class="rail-btn" data-view="orders" title="检修工单">工单</button>
+      <button class="rail-btn" data-view="know" title="知识库">知识</button>
       <div class="rail-foot">
-        <button class="rail-btn" data-view="settings" title="设置">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-2.9 1.2V21a2 2 0 11-4 0v-.1A1.7 1.7 0 004.8 19.6l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 002.1 13.9H2a2 2 0 110-4h.1a1.7 1.7 0 001.16-2.9l-.06-.06A2 2 0 016 4.11l.06.06A1.7 1.7 0 009 3.9V3.8a2 2 0 114 0v.1a1.7 1.7 0 002.9 1.16l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0021.9 10H22a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
-        </button>
+        <button class="rail-btn" data-view="settings" title="设置">设置</button>
       </div>
     </nav>
 
