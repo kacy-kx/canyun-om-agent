@@ -86,3 +86,5 @@ GITHUB_TOKEN=ghp_xxx REPO_NAME=canyun-om-agent ./deploy.sh
 ## 说明
 
 这是前端原型，所有数据均为内置示例，推理链与结论为脚本模拟，不含真实模型调用。接后端时，把 `runFlow()` 的 `steps` 换成流式接口推送的事件即可，DOM 结构不用改。
+
+> 版本记录：v1 基础版 · v2 多模态（视觉/声纹/PHM）+ 现场模式 · v3 文字导航
