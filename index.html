@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>载运运维 · 检测智能体</title>
+<meta name="description" content="载运设备运维检测智能体控制台：实时监测、异常检测、根因诊断与检修工单闭环。" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2312558F'/%3E%3Cpath d='M8 21l5-6 4 3 7-9' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<style>
+:root{
+  --bg:#EDF0F4; --surface:#FFFFFF; --surface-2:#F7F9FB; --surface-3:#F1F4F8;
+  --line:#E3E8EF; --line-2:#D3DBE5;
+  --ink:#121A24; --ink-2:#57636F; --ink-3:#8B96A3;
+  --brand:#12558F; --brand-2:#2C7CC2; --brand-soft:#E8F1FA;
+  --red:#C33C37; --red-soft:#FBEAE9; --amber:#A96C00; --amber-soft:#FCF1DC;
+  --green:#0F7A5C; --green-soft:#E2F2EC;
+  --r:10px; --r-lg:14px;
+  --mono:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  --shadow:0 1px 2px rgba(18,26,36,.05), 0 8px 24px -16px rgba(18,26,36,.28);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border:0;background:none;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#C8D1DC;border-radius:8px;border:2px solid transparent;background-clip:content-box;}
+::-webkit-scrollbar-thumb:hover{background:#AEB9C7;background-clip:content-box;}
+::-webkit-scrollbar-track{background:transparent;}
+
+.app{height:100vh;display:grid;grid-template-rows:52px minmax(0,1fr);overflow:hidden;}
+
+/* ---------- top bar ---------- */
+.topbar{
+  display:flex;align-items:center;gap:12px;padding:0 14px;background:var(--surface);
+  border-bottom:1px solid var(--line);position:relative;z-index:40;
+}
+.brand{display:flex;align-items:center;gap:9px;}
+.logo{
+  width:22px;height:22px;border-radius:6px;background:var(--brand);position:relative;flex:none;
+}
+.logo::after{
+  content:"";position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M8 21l5-6 4 3 7-9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat;
+}
+.brand-name{font-size:14px;font-weight:600;letter-spacing:.2px;}
+.brand-sub{font-size:11px;color:var(--ink-3);padding-left:6px;border-left:1px solid var(--line-2);margin-left:2px;letter-spacing:.4px;}
+.sel{position:relative;display:flex;align-items:center;gap:7px;height:30px;padding:0 10px;border:1px solid var(--line-2);border-radius:999px;background:var(--surface-2);margin-left:8px;}
+.sel:hover{border-color:#B9C5D3;}
+.sel-k{font-size:11px;color:var(--ink-3);}
+.sel-v{font-size:12.5px;font-weight:500;}
+.caret{width:0;height:0;border-left:3.5px solid transparent;border-right:3.5px solid transparent;border-top:4px solid var(--ink-3);margin-left:2px;}
+.sel-menu{
+  position:absolute;top:36px;left:0;min-width:210px;background:var(--surface);border:1px solid var(--line-2);
+  border-radius:10px;box-shadow:var(--shadow);padding:5px;display:none;z-index:60;
+}
+.sel.open .sel-menu{display:block;}
+.sel-menu button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-radius:7px;font-size:12.5px;text-align:left;}
+.sel-menu button:hover{background:var(--surface-3);}
+.sel-menu button.on{background:var(--brand-soft);color:var(--brand);font-weight:500;}
+.sel-menu .dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex:none;}
+.sel-menu .dot.warn{background:var(--amber);}
+.sel-menu .dot.bad{background:var(--red);}
+.seg{display:flex;background:var(--surface-3);border-radius:8px;padding:2px;margin-left:4px;}
+.seg button{padding:3px 11px;border-radius:6px;font-size:12px;color:var(--ink-2);}
+.seg button.on{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(18,26,36,.08);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.pill{display:flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:11.5px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);}
+.pill i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(15,122,92,.12);}
+.pill.warn{background:var(--red-soft);border-color:#F1C6C4;color:var(--red);font-weight:500;}
+.pill.warn i{background:var(--red);box-shadow:0 0 0 3px rgba(195,60,55,.12);}
+.clock{font-family:var(--mono);font-size:12px;color:var(--ink-3);padding-left:4px;}
+
+/* ---------- rail ---------- */
+.body{display:grid;grid-template-columns:54px minmax(0,1fr) 376px;overflow:hidden;}
+.rail{
+  background:var(--surface);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;
+}
+.rail-btn{
+  width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:var(--ink-3);position:relative;transition:background .15s,color .15s;
+}
+.rail-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.rail-btn:hover{background:var(--surface-3);color:var(--ink);}
+.rail-btn.on{background:var(--brand-soft);color:var(--brand);}
+.rail-btn.on::before{content:"";position:absolute;left:-8px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--brand);}
+.rail-foot{margin-top:auto;}
+
+/* ---------- main ---------- */
+.main{display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+.view{display:none;flex:1;overflow:auto;padding:14px 16px 6px;}
+.view.on{display:block;}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+.metric{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;
+  display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden;
+}
+.metric .k{font-size:11.5px;color:var(--ink-2);display:flex;align-items:center;gap:5px;}
+.metric .v{font-size:25px;font-weight:600;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1.25;}
+.metric .v small{font-size:11.5px;font-weight:400;color:var(--ink-3);letter-spacing:0;margin-left:2px;}
+.metric .d{font-size:11px;color:var(--ink-3);}
+.metric .d b{font-weight:500;}
+.metric .d .up{color:var(--red);}
+.metric .d .down{color:var(--green);}
+.metric.accent{background:linear-gradient(180deg,#F4F9FE,#FFFFFF);border-color:#CFE1F2;}
+
+.row{display:grid;gap:10px;margin-top:10px;}
+.row.a{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);}
+.row.b{grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0;}
+.card-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.card-h h3{margin:0;font-size:12.5px;font-weight:600;letter-spacing:.2px;}
+.card-h .sub{font-size:11px;color:var(--ink-3);}
+.card-h .right{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-3);}
+.lnk{color:var(--brand);font-size:11.5px;cursor:pointer;}
+.lnk:hover{text-decoration:underline;}
+
+/* chart */
+.chart-wrap{position:relative;height:168px;margin-top:2px;}
+.chart-wrap svg{display:block;}
+.tip{
+  position:absolute;pointer-events:none;background:#101A24;color:#fff;border-radius:6px;padding:5px 8px;
+  font-size:11px;line-height:1.45;opacity:0;transform:translate(-50%,-120%);transition:opacity .12s;white-space:nowrap;z-index:5;
+}
+.tip b{font-family:var(--mono);font-weight:500;}
+.legend{display:flex;gap:12px;font-size:11px;color:var(--ink-2);margin-top:6px;}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0;}
+
+/* gauge */
+.gauge{display:flex;align-items:center;gap:16px;}
+.gauge svg{flex:none;}
+.gauge-meta{min-width:0;}
+.gauge-meta .big{font-size:28px;font-weight:600;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.1;}
+.gauge-meta .big span{font-size:12px;color:var(--ink-3);font-weight:400;letter-spacing:0;}
+.gauge-meta .tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--green-soft);color:var(--green);margin-top:4px;}
+.gauge-meta p{margin:8px 0 0;font-size:11.5px;color:var(--ink-2);line-height:1.6;}
+
+/* events */
+.ev-list{display:flex;flex-direction:column;}
+.ev{
+  display:grid;grid-template-columns:14px minmax(0,1fr) auto;align-items:center;gap:9px;
+  padding:8px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:6px;transition:background .12s;
+}
+.ev:first-child{border-top:0;}
+.ev:hover{background:var(--surface-2);}
+.ev.sel{background:var(--brand-soft);}
+.ev .dot{width:7px;height:7px;border-radius:50%;justify-self:center;}
+.ev .dot.high{background:var(--red);box-shadow:0 0 0 3px rgba(195,60,55,.12);}
+.ev .dot.mid{background:#E09B1A;box-shadow:0 0 0 3px rgba(224,155,26,.14);}
+.ev .dot.low{background:#4C8FD1;box-shadow:0 0 0 3px rgba(76,143,209,.12);}
+.ev .t{min-width:0;}
+.ev .t b{display:block;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ev .t span{font-size:11px;color:var(--ink-3);}
+.ev .m{font-size:11px;color:var(--ink-2);font-family:var(--mono);text-align:right;white-space:nowrap;}
+.ev .m em{display:block;font-style:normal;color:var(--ink-3);font-family:inherit;font-size:10.5px;}
+
+/* subsystem */
+.sys{display:flex;flex-direction:column;gap:9px;margin-top:2px;}
+.sys-row{display:grid;grid-template-columns:66px minmax(0,1fr) 34px;align-items:center;gap:9px;font-size:12px;}
+.sys-row .n{color:var(--ink-2);}
+.bar{height:6px;background:var(--surface-3);border-radius:99px;overflow:hidden;}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .5s ease;}
+.bar i.ok{background:var(--green);}
+.bar i.warn{background:#E09B1A;}
+.bar i.bad{background:var(--red);}
+.sys-row .p{font-family:var(--mono);font-size:11.5px;text-align:right;color:var(--ink-2);}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{text-align:left;font-weight:500;color:var(--ink-3);font-size:11px;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tbody tr:hover{background:var(--surface-2);}
+td.num{font-family:var(--mono);font-size:11.5px;}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:1px 7px;border-radius:99px;border:1px solid transparent;white-space:nowrap;}
+.badge.ok{background:var(--green-soft);color:var(--green);border-color:#C4E4D8;}
+.badge.warn{background:var(--amber-soft);color:var(--amber);border-color:#EFD9AE;}
+.badge.bad{background:var(--red-soft);color:var(--red);border-color:#F1C6C4;}
+.badge.info{background:var(--brand-soft);color:var(--brand);border-color:#CDE0F1;}
+.badge.gray{background:var(--surface-3);color:var(--ink-2);border-color:var(--line);}
+
+/* orders */
+.orders{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.order{border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;background:var(--surface);}
+.order .oh{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.order .id{font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+.order h4{margin:0;font-size:12.5px;font-weight:500;line-height:1.45;}
+.order p{margin:4px 0 0;font-size:11.5px;color:var(--ink-2);}
+.order .of{display:flex;align-items:center;gap:8px;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--ink-3);}
+
+/* knowledge */
+.kb-search{display:flex;gap:8px;margin-bottom:12px;}
+.kb-search input{flex:1;height:34px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:12.5px;color:var(--ink);outline:none;}
+.kb-search input:focus{border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(44,124,194,.12);}
+.doc{border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;margin-bottom:8px;background:var(--surface);cursor:pointer;}
+.doc:hover{border-color:#C6D5E4;}
+.doc h4{margin:0 0 3px;font-size:12.5px;font-weight:500;}
+.doc p{margin:0;font-size:11.5px;color:var(--ink-2);}
+.doc .meta{margin-top:7px;display:flex;gap:8px;font-size:10.5px;color:var(--ink-3);}
+
+/* composer */
+.composer{padding:10px 16px 12px;border-top:1px solid var(--line);background:var(--surface);}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.chip{font-size:11.5px;color:var(--ink-2);border:1px solid var(--line-2);background:var(--surface-2);border-radius:99px;padding:3px 10px;transition:.15s;}
+.chip:hover{background:var(--brand-soft);border-color:#C7DCF0;color:var(--brand);}
+.input-box{display:flex;align-items:center;gap:8px;border:1px solid var(--line-2);border-radius:11px;background:var(--surface-2);padding:6px 6px 6px 12px;transition:.15s;}
+.input-box:focus-within{border-color:var(--brand-2);background:var(--surface);box-shadow:0 0 0 3px rgba(44,124,194,.1);}
+.input-box input{flex:1;border:0;background:none;outline:none;font-size:13px;color:var(--ink);height:26px;}
+.input-box input::placeholder{color:var(--ink-3);}
+.kbd{font-size:10px;color:var(--ink-3);border:1px solid var(--line-2);border-radius:4px;padding:1px 5px;font-family:var(--mono);}
+.send{width:30px;height:30px;border-radius:8px;background:var(--brand);display:flex;align-items:center;justify-content:center;flex:none;}
+.send:hover{background:#0E477A;}
+.send svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.send[disabled]{opacity:.5;cursor:default;}
+
+/* ---------- agent ---------- */
+.agent{background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;min-width:0;}
+.agent-h{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);}
+.agent-h .av{width:24px;height:24px;border-radius:7px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;flex:none;}
+.agent-h .av svg{width:14px;height:14px;stroke:var(--brand);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.agent-h .nm{font-size:12.5px;font-weight:600;}
+.agent-h .st{font-size:10.5px;color:var(--green);display:flex;align-items:center;gap:4px;}
+.agent-h .st i{width:5px;height:5px;border-radius:50%;background:var(--green);}
+.agent-h .clr{margin-left:auto;font-size:11px;color:var(--ink-3);}
+.agent-h .clr:hover{color:var(--ink);}
+.msgs{flex:1;overflow:auto;padding:14px 14px 20px;display:flex;flex-direction:column;gap:14px;}
+.msg-u{align-self:flex-end;max-width:88%;background:var(--brand);color:#fff;border-radius:12px 12px 3px 12px;padding:8px 12px;font-size:12.5px;line-height:1.55;}
+.msg-a{display:flex;flex-direction:column;gap:9px;}
+.msg-a .lead{font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:6px;}
+.msg-a .lead i{width:5px;height:5px;border-radius:50%;background:var(--brand-2);}
+.steps{display:flex;flex-direction:column;gap:7px;border-left:1.5px solid var(--line);padding-left:11px;margin-left:3px;}
+.step{display:flex;gap:7px;align-items:flex-start;font-size:11.5px;color:var(--ink-2);opacity:0;transform:translateY(3px);animation:in .28s ease forwards;}
+@keyframes in{to{opacity:1;transform:none;}}
+.step .ic{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--green);flex:none;margin-top:2px;position:relative;background:var(--green-soft);}
+.step .ic::after{content:"";position:absolute;left:2.5px;top:4px;width:5px;height:3px;border-left:1.4px solid var(--green);border-bottom:1.4px solid var(--green);transform:rotate(-45deg);}
+.step.running .ic{border-color:#D19A28;background:var(--amber-soft);animation:pulse 1s infinite;}
+.step.running .ic::after{display:none;}
+@keyframes pulse{50%{opacity:.45;}}
+.step .tx{min-width:0;}
+.step code{font-family:var(--mono);font-size:10px;color:var(--brand);background:var(--brand-soft);border-radius:4px;padding:1px 5px;margin-left:5px;white-space:nowrap;}
+.answer{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;line-height:1.68;color:var(--ink);animation:in .3s ease forwards;}
+.answer .conf{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ink-3);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);}
+.answer .conf .cbar{width:52px;height:4px;border-radius:99px;background:var(--line-2);overflow:hidden;}
+.answer .conf .cbar i{display:block;height:100%;background:var(--green);}
+.evi{display:flex;gap:5px;flex-wrap:wrap;}
+.evi button{font-size:10.5px;color:var(--brand);background:var(--surface);border:1px solid #CFE0F0;border-radius:99px;padding:2px 8px;}
+.evi button:hover{background:var(--brand-soft);}
+.acts{display:flex;gap:6px;}
+.btn{font-size:11.5px;border-radius:7px;padding:5px 11px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);transition:.15s;}
+.btn:hover{border-color:#B9C7D6;color:var(--ink);}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;}
+.btn.primary:hover{background:#0E477A;}
+.btn.danger{color:var(--red);border-color:#EDC4C1;background:var(--red-soft);}
+.btn.danger:hover{background:#F7DDDB;}
+.typing{display:inline-block;width:6px;height:13px;background:var(--brand-2);vertical-align:-2px;animation:blink .9s steps(1) infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+/* modal */
+.mask{position:fixed;inset:0;background:rgba(15,23,32,.34);display:none;align-items:center;justify-content:center;z-index:80;padding:24px;}
+.mask.on{display:flex;}
+.modal{width:min(620px,100%);max-height:82vh;overflow:auto;background:var(--surface);border-radius:var(--r-lg);box-shadow:0 24px 60px -20px rgba(15,23,32,.45);}
+.modal-h{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);}
+.modal-h h3{margin:0;font-size:13px;font-weight:600;}
+.modal-h .x{margin-left:auto;width:26px;height:26px;border-radius:6px;color:var(--ink-3);font-size:16px;line-height:1;}
+.modal-h .x:hover{background:var(--surface-3);color:var(--ink);}
+.modal-b{padding:16px 18px 20px;font-size:12.5px;line-height:1.7;color:var(--ink-2);}
+.modal-b h4{font-size:12px;margin:14px 0 6px;color:var(--ink);font-weight:600;}
+.modal-b h4:first-child{margin-top:0;}
+.modal-b .q{border-left:2px solid var(--brand-2);background:var(--surface-2);padding:8px 12px;border-radius:0 6px 6px 0;margin:6px 0;color:var(--ink);}
+.modal-b table td{border-bottom:1px solid var(--line);}
+
+/* toast */
+.toasts{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:90;align-items:center;}
+.toast{background:#101A24;color:#fff;font-size:12.5px;border-radius:8px;padding:9px 16px;box-shadow:0 10px 30px -12px rgba(0,0,0,.5);animation:tin .25s ease;}
+@keyframes tin{from{opacity:0;transform:translateY(8px);}}
+
+.agent-fab{display:none;}
+
+@media (max-width:1320px){
+  .body{grid-template-columns:54px minmax(0,1fr);}
+  .agent{position:fixed;top:52px;right:0;bottom:0;width:376px;transform:translateX(101%);transition:transform .22s ease;z-index:50;box-shadow:var(--shadow);}
+  .agent.open{transform:none;}
+  .agent-fab{display:flex;align-items:center;gap:6px;position:fixed;right:16px;bottom:96px;z-index:45;background:var(--brand);color:#fff;border-radius:99px;padding:7px 14px;font-size:12px;box-shadow:0 8px 24px -10px rgba(18,85,143,.7);}
+}
+@media (max-width:900px){
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .row.a,.row.b{grid-template-columns:minmax(0,1fr);}
+  .rail{display:none;}
+  .body{grid-template-columns:minmax(0,1fr);}
+  .brand-sub,.seg,.clock{display:none;}
+  .view{padding:12px 12px 4px;}
+  .composer{padding:8px 12px 10px;}
+  .chips .chip:nth-child(n+3){display:none;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo"></span>
+      <span class="brand-name">载运运维</span>
+      <span class="brand-sub">检测智能体</span>
+    </div>
+
+    <div class="sel" id="trainSel">
+      <span class="sel-k">车组</span>
+      <span class="sel-v" id="trainName">CRH-380B / 03</span>
+      <span class="caret"></span>
+      <div class="sel-menu" id="trainMenu"></div>
+    </div>
+
+    <div class="seg" id="rangeSeg">
+      <button data-range="7" class="on">近 7 天</button>
+      <button data-range="30">近 30 天</button>
+    </div>
+
+    <div class="topbar-right">
+      <div class="pill"><i></i>本地推理 · 在线</div>
+      <div class="pill warn" id="alertPill"><i></i><span id="alertCount">3 条待确认</span></div>
+      <div class="clock" id="clock">09:16</div>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="rail">
+      <button class="rail-btn on" data-view="dash" title="监测看板">
+        <svg viewBox="0 0 24 24"><path d="M4 19V10M9.5 19V5M15 19v-6M20.5 19v-9"/></svg>
+      </button>
+      <button class="rail-btn" data-view="tasks" title="检测任务">
+        <svg viewBox="0 0 24 24"><path d="M9 5h9M9 12h9M9 19h9M4.5 5l1 1 1.6-1.8M4.5 12l1 1 1.6-1.8M4.5 19l1 1 1.6-1.8"/></svg>
+      </button>
+      <button class="rail-btn" data-view="orders" title="检修工单">
+        <svg viewBox="0 0 24 24"><path d="M7 4h10a1 1 0 011 1v15l-3-2-3 2-3-2-3 2V5a1 1 0 011-1z"/><path d="M9.5 9h5M9.5 13h5"/></svg>
+      </button>
+      <button class="rail-btn" data-view="know" title="知识库">
+        <svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 015.5 4H10v16H5.5A1.5 1.5 0 014 18.5zM20 5.5A1.5 1.5 0 0018.5 4H14v16h4.5a1.5 1.5 0 001.5-1.5z"/></svg>
+      </button>
+      <div class="rail-foot">
+        <button class="rail-btn" data-view="settings" title="设置">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-2.9 1.2V21a2 2 0 11-4 0v-.1A1.7 1.7 0 004.8 19.6l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 002.1 13.9H2a2 2 0 110-4h.1a1.7 1.7 0 001.16-2.9l-.06-.06A2 2 0 016 4.11l.06.06A1.7 1.7 0 009 3.9V3.8a2 2 0 114 0v.1a1.7 1.7 0 002.9 1.16l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0021.9 10H22a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <main class="main">
+      <section class="view on" id="view-dash">
+        <div class="metrics">
+          <div class="metric accent">
+            <div class="k">车组健康度</div>
+            <div class="v" id="mHealth">92<small>/100</small></div>
+            <div class="d" id="mHealthD">较昨日 <b class="down">-1.2</b></div>
+          </div>
+          <div class="metric">
+            <div class="k">待确认告警</div>
+            <div class="v" id="mAlerts" style="color:var(--red)">3</div>
+            <div class="d" id="mAlertsD">高 1 · 中 1 · 低 1</div>
+          </div>
+          <div class="metric">
+            <div class="k">今日检测任务</div>
+            <div class="v" id="mTasks">128<small>/140</small></div>
+            <div class="d" id="mTasksD">完成率 <b>91.4%</b></div>
+          </div>
+          <div class="metric">
+            <div class="k">预测 72h 风险件</div>
+            <div class="v" id="mRisk">2</div>
+            <div class="d" id="mRiskD">轴箱轴承 ×1 · 牵引电机 ×1</div>
+          </div>
+        </div>
+
+        <div class="row a">
+          <div class="card">
+            <div class="card-h">
+              <h3>轴箱轴承 · 振动 RMS 趋势</h3>
+              <span class="sub" id="chartUnit">单位 mm/s</span>
+              <div class="right"><span>阈值 4.5</span></div>
+            </div>
+            <div class="chart-wrap" id="chartWrap">
+              <div class="tip" id="tip"></div>
+            </div>
+            <div class="legend">
+              <span><i style="background:#2C7CC2"></i>实测 RMS</span>
+              <span><i style="background:#EDC4C1"></i>超阈值</span>
+              <span><i style="background:transparent;border-top:1px dashed #C33C37;height:0;width:12px;border-radius:0"></i>告警阈值</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h3>健康度构成</h3><span class="sub">加权评分</span></div>
+            <div class="gauge" id="gaugeBox"></div>
+            <div class="sys" id="sysList"></div>
+          </div>
+        </div>
+
+        <div class="row b">
+          <div class="card">
+            <div class="card-h">
+              <h3>待处理事件</h3>
+              <span class="sub" id="evCount">3 条</span>
+              <div class="right"><span class="lnk" id="evAll">检测任务 →</span></div>
+            </div>
+            <div class="ev-list" id="evList"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h3>智能体建议</h3><span class="sub">刚刚更新</span></div>
+            <div id="insight" style="font-size:12.5px;line-height:1.75;color:var(--ink-2)"></div>
+            <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+              <button class="chip" data-flow="plan">排本周巡检计划</button>
+              <button class="chip" data-flow="report">生成今日检修建议</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-tasks">
+        <div class="card">
+          <div class="card-h"><h3>今日检测任务</h3><span class="sub" id="taskSub">140 项 · 已完成 128</span>
+            <div class="right"><span class="badge info">自动排程</span></div>
+          </div>
+          <table>
+            <thead><tr><th>任务编号</th><th>检测部位</th><th>方式</th><th>执行人</th><th>窗口</th><th>状态</th></tr></thead>
+            <tbody id="taskBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="view-orders">
+        <div class="card-h" style="padding:0 2px 10px">
+          <h3 style="margin:0;font-size:13px">检修工单</h3>
+          <span class="sub" id="orderSub">3 张进行中</span>
+        </div>
+        <div class="orders" id="orderList"></div>
+      </section>
+
+      <section class="view" id="view-know">
+        <div class="kb-search">
+          <input id="kbInput" placeholder="检索维修手册、历史工单、故障案例…" />
+          <button class="btn" id="kbBtn">检索</button>
+        </div>
+        <div id="docList"></div>
+      </section>
+
+      <div class="composer">
+        <div class="chips">
+          <button class="chip" data-flow="report">生成今日检修建议</button>
+          <button class="chip" data-flow="plan">排本周巡检计划</button>
+          <button class="chip" data-flow="export">导出日报</button>
+          <button class="chip" data-flow="compare">三车组横向对比</button>
+        </div>
+        <div class="input-box">
+          <input id="input" placeholder="描述现象或直接提问，例如「2 轴箱为什么报警」…" autocomplete="off" />
+          <span class="kbd">Ctrl K</span>
+          <button class="send" id="send" aria-label="发送">
+            <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="agent" id="agent">
+      <div class="agent-h">
+        <div class="av"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.4"/></svg></div>
+        <div>
+          <div class="nm">运维智能体</div>
+          <div class="st"><i></i>已接入 6 个工具</div>
+        </div>
+        <button class="clr" id="clearMsgs">清空</button>
+      </div>
+      <div class="msgs" id="msgs"></div>
+    </aside>
+  </div>
+</div>
+
+<button class="agent-fab" id="agentFab">智能体</button>
+
+<div class="mask" id="mask">
+  <div class="modal">
+    <div class="modal-h"><h3 id="modalTitle">依据</h3><button class="x" id="modalX">×</button></div>
+    <div class="modal-b" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const RED = '#C33C37', BLUE = '#2C7CC2', AMBER = '#E09B1A', GREEN = '#0F7A5C';
+
+function money(n){ return n; }
+function fmtDate(d){ return (d.getMonth()+1).toString().padStart(2,'0') + '-' + d.getDate().toString().padStart(2,'0'); }
+
+/* ---------------- 数据 ---------------- */
+const TRAINS = {
+  'CRH-380B / 03': {
+    code: 'CRH-380B / 03', line: '京沪高铁 · 上行',
+    health: 92, delta: -1.2,
+    alerts: [1, 1, 1], tasks: [128, 140], risk: [2, '轴箱轴承 ×1 · 牵引电机 ×1'],
+    thr: 4.5,
+    s7: [3.1, 3.4, 3.2, 3.9, 4.1, 4.6, 5.2],
+    subsys: [['走行部', 78, 'warn'], ['牵引系统', 91, 'ok'], ['制动系统', 95, 'ok'], ['车体车门', 97, 'ok'], ['网络控制', 99, 'ok']],
+    events: [
+      { id:'E1', lv:'high', title:'03 车 2 轴轴箱振动超限', time:'09:02', sys:'走行部', val:'5.2 mm/s', thr:'4.5',
+        detail:'08:54 起振动 RMS 由 4.1 升至 5.2 mm/s，边频带出现 168Hz 特征峰，轴箱温度同步上升 6℃。' },
+      { id:'E2', lv:'mid', title:'牵引电机温升偏高', time:'08:41', sys:'牵引系统', val:'112 ℃', thr:'105',
+        detail:'3 车 1 位牵引电机定子温度连续 40 分钟高于阈值，冷却风量偏低 12%。' },
+      { id:'E3', lv:'low', title:'制动缸压力波动', time:'07:55', sys:'制动系统', val:'±0.08 MPa', thr:'±0.05',
+        detail:'缓解过程中 5 车制动缸压力出现 3 次小幅波动，未触发制动故障码。' }
+    ]
+  },
+  'CRH-380B / 07': {
+    code: 'CRH-380B / 07', line: '京沪高铁 · 下行',
+    health: 96, delta: 0.4,
+    alerts: [0, 1, 1], tasks: [134, 140], risk: [1, '齿轮箱 ×1'],
+    thr: 4.5,
+    s7: [2.8, 2.7, 3.0, 2.9, 3.2, 3.1, 3.3],
+    subsys: [['走行部', 94, 'ok'], ['牵引系统', 97, 'ok'], ['制动系统', 93, 'ok'], ['车体车门', 98, 'ok'], ['网络控制', 99, 'ok']],
+    events: [
+      { id:'E1', lv:'mid', title:'齿轮箱油温偏高', time:'08:12', sys:'走行部', val:'86 ℃', thr:'80',
+        detail:'2 车齿轮箱油温较同工况均值高 7℃，油位正常，疑似散热片积尘。' },
+      { id:'E2', lv:'low', title:'塞拉门关闭时间偏长', time:'07:30', sys:'车体车门', val:'3.4 s', thr:'3.0',
+        detail:'6 车 2 位塞拉门关闭耗时 3.4s，密封条阻力略高，建议润滑。' }
+    ]
+  },
+  'HXD3-2201': {
+    code: 'HXD3-2201', line: '货运 · 徐州北机务段',
+    health: 81, delta: -2.6,
+    alerts: [2, 1, 0], tasks: [86, 120], risk: [3, '轮对 ×1 · 主变风机 ×1 · 空压机 ×1'],
+    thr: 4.5,
+    s7: [4.2, 4.4, 4.6, 5.1, 5.4, 5.0, 5.8],
+    subsys: [['走行部', 68, 'bad'], ['牵引系统', 82, 'warn'], ['制动系统', 88, 'warn'], ['车体车门', 92, 'ok'], ['网络控制', 95, 'ok']],
+    events: [
+      { id:'E1', lv:'high', title:'1 位轮对踏面剥离', time:'06:48', sys:'走行部', val:'2 级', thr:'1 级',
+        detail:'巡检影像识别到 1 位轮对踏面 18×9mm 剥离，伴随周期性冲击振动，需扣修。' },
+      { id:'E2', lv:'high', title:'主变压器风机电流异常', time:'05:20', sys:'牵引系统', val:'11.8 A', thr:'9.5',
+        detail:'风机电流高于基线 24%，风量下降，疑似轴承卡滞。' },
+      { id:'E3', lv:'mid', title:'空压机打风时间偏长', time:'04:05', sys:'制动系统', val:'4.6 min', thr:'3.5',
+        detail:'打风时间延长，干燥器排水量增大，存在泄漏可能。' }
+    ]
+  }
+};
+
+const state = {
+  train: 'CRH-380B / 03',
+  range: 7,
+  view: 'dash',
+  busy: false,
+  orders: [
+    { id:'WO-4821', title:'03 车 2 轴轴箱轴承更换', from:'智能体建议 · 已人工确认', st:'执行中', who:'李工 · 走行组', eta:'今日 16:00' },
+    { id:'WO-4818', title:'3 车牵引电机冷却风道清灰', from:'人工创建', st:'待接单', who:'待分配', eta:'今日 20:00' },
+    { id:'WO-4809', title:'5 车制动缸压力传感器校验', from:'智能体建议', st:'已完成', who:'王工 · 制动组', eta:'昨日 22:10' }
+  ]
+};
+
+function T(){ return TRAINS[state.train]; }
+
+function series(){
+  const t = T();
+  if (state.range === 7) return t.s7.slice();
+  const out = [];
+  let v = t.s7[0] - 0.9;
+  for (let i = 0; i < 30; i++) {
+    const drift = (t.s7[6] - v) / (30 - i) * 0.9;
+    v = v + drift + (Math.sin(i * 2.7 + t.code.length) * 0.18) + ((i % 5 === 0) ? 0.12 : 0);
+    out.push(Math.round(v * 100) / 100);
+  }
+  out[29] = t.s7[6];
+  return out;
+}
+
+function dates(){
+  const n = state.range, arr = [];
+  const now = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 86400000);
+    arr.push(fmtDate(d));
+  }
+  return arr;
+}
+
+/* ---------------- 看板渲染 ---------------- */
+function renderMetrics(){
+  const t = T();
+  $('#mHealth').innerHTML = t.health + '<small>/100</small>';
+  $('#mHealthD').innerHTML = '较昨日 <b class="' + (t.delta < 0 ? 'up' : 'down') + '">' + (t.delta > 0 ? '+' : '') + t.delta + '</b>';
+  const a = t.alerts;
+  $('#mAlerts').textContent = a[0] + a[1] + a[2];
+  $('#mAlertsD').textContent = '高 ' + a[0] + ' · 中 ' + a[1] + ' · 低 ' + a[2];
+  $('#alertCount').textContent = (a[0] + a[1] + a[2]) + ' 条待确认';
+  $('#alertPill').style.display = (a[0] + a[1] + a[2]) ? '' : 'none';
+  $('#mTasks').innerHTML = t.tasks[0] + '<small>/' + t.tasks[1] + '</small>';
+  $('#mTasksD').innerHTML = '完成率 <b>' + (t.tasks[0] / t.tasks[1] * 100).toFixed(1) + '%</b>';
+  $('#mRisk').textContent = t.risk[0];
+  $('#mRiskD').textContent = t.risk[1];
+  $('#evCount').textContent = t.events.length + ' 条';
+}
+
+function renderChart(){
+  const wrap = $('#chartWrap');
+  const tip = $('#tip');
+  const old = wrap.querySelector('svg');
+  if (old) old.remove();
+  const w = wrap.clientWidth || 560, h = wrap.clientHeight || 168;
+  const data = series(), labels = dates(), thr = T().thr;
+  const pad = { l: 30, r: 12, t: 14, b: 22 };
+  const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+  const maxV = Math.max(thr * 1.25, Math.max.apply(null, data) * 1.12);
+  const x = (i) => pad.l + (data.length === 1 ? iw / 2 : i * iw / (data.length - 1));
+  const y = (v) => pad.t + (1 - v / maxV) * ih;
+
+  let grid = '';
+  for (let i = 0; i <= 3; i++) {
+    const v = maxV * i / 3, yy = y(v);
+    grid += '<line x1="' + pad.l + '" y1="' + yy + '" x2="' + (w - pad.r) + '" y2="' + yy + '" stroke="#EDF1F6" stroke-width="1"/>';
+    grid += '<text x="' + (pad.l - 7) + '" y="' + (yy + 3.5) + '" text-anchor="end" font-size="10" fill="#8B96A3" font-family="' + 'ui-monospace,Menlo,monospace' + '">' + v.toFixed(1) + '</text>';
+  }
+
+  let line = '', area = '';
+  data.forEach((v, i) => {
+    line += (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1) + ' ';
+  });
+  area = line + 'L' + x(data.length - 1).toFixed(1) + ' ' + y(0) + ' L' + x(0).toFixed(1) + ' ' + y(0) + ' Z';
+
+  let dots = '';
+  data.forEach((v, i) => {
+    const over = v > thr;
+    const r = (i === data.length - 1) ? 4 : 2.6;
+    dots += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="' + r + '" fill="' + (over ? RED : BLUE) + '" stroke="#fff" stroke-width="' + (i === data.length - 1 ? 2 : 1) + '"/>';
+  });
+
+  const thrY = y(thr);
+  let xlab = '';
+  const step = data.length > 12 ? Math.ceil(data.length / 6) : 1;
+  labels.forEach((s, i) => {
+    if (i % step === 0 || i === labels.length - 1) {
+      xlab += '<text x="' + x(i).toFixed(1) + '" y="' + (h - 6) + '" text-anchor="middle" font-size="10" fill="#8B96A3">' + s + '</text>';
+    }
+  });
+
+  const svg = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+    '<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0%" stop-color="#2C7CC2" stop-opacity="0.18"/>' +
+    '<stop offset="100%" stop-color="#2C7CC2" stop-opacity="0.01"/></linearGradient></defs>' +
+    grid +
+    '<line x1="' + pad.l + '" y1="' + thrY + '" x2="' + (w - pad.r) + '" y2="' + thrY + '" stroke="' + RED + '" stroke-width="1" stroke-dasharray="4 4" opacity="0.75"/>' +
+    '<text x="' + (w - pad.r) + '" y="' + (thrY - 6) + '" text-anchor="end" font-size="10" fill="' + RED + '">告警阈值</text>' +
+    '<path d="' + area + '" fill="url(#ga)"/>' +
+    '<path d="' + line + '" fill="none" stroke="' + BLUE + '" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>' +
+    dots + xlab +
+    '<line id="cross" x1="0" y1="' + pad.t + '" x2="0" y2="' + (h - pad.b) + '" stroke="#B9C7D6" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>' +
+    '<g id="hoverDots"></g>' +
+    '<rect x="' + pad.l + '" y="' + pad.t + '" width="' + iw + '" height="' + ih + '" fill="transparent"/>' +
+    '</svg>';
+
+  wrap.insertAdjacentHTML('afterbegin', svg);
+
+  const svgEl = wrap.querySelector('svg');
+  const cross = $('#cross', svgEl), hg = $('#hoverDots', svgEl);
+  svgEl.addEventListener('mousemove', (e) => {
+    const rect = svgEl.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    let idx = Math.round((mx - pad.l) / (iw / (data.length - 1)));
+    idx = Math.max(0, Math.min(data.length - 1, idx));
+    const v = data[idx];
+    cross.setAttribute('x1', x(idx)); cross.setAttribute('x2', x(idx)); cross.setAttribute('opacity', '1');
+    hg.innerHTML = '<circle cx="' + x(idx) + '" cy="' + y(v) + '" r="5" fill="none" stroke="' + BLUE + '" stroke-width="1.5"/>';
+    tip.style.opacity = '1';
+    tip.style.left = Math.min(Math.max(x(idx), 60), w - 60) + 'px';
+    tip.style.top = y(v) + 'px';
+    tip.innerHTML = labels[idx] + '<br><b>' + v.toFixed(2) + '</b> mm/s' + (v > thr ? ' · 超阈值' : '');
+  });
+  svgEl.addEventListener('mouseleave', () => {
+    tip.style.opacity = '0'; cross.setAttribute('opacity', '0'); hg.innerHTML = '';
+  });
+}
+
+function renderGauge(){
+  const t = T(), v = t.health, r = 38, c = 2 * Math.PI * r;
+  const color = v >= 90 ? GREEN : v >= 80 ? AMBER : RED;
+  const tone = v >= 90 ? '状态良好' : v >= 80 ? '需关注' : '需立即处理';
+  const bg = v >= 90 ? 'var(--green-soft);color:var(--green)' : v >= 80 ? 'var(--amber-soft);color:var(--amber)' : 'var(--red-soft);color:var(--red)';
+  $('#gaugeBox').innerHTML =
+    '<svg width="96" height="96" viewBox="0 0 96 96">' +
+    '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="#EDF1F6" stroke-width="9"/>' +
+    '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="9" stroke-linecap="round" ' +
+    'stroke-dasharray="' + (c * v / 100).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 48 48)"/>' +
+    '<text x="48" y="50" text-anchor="middle" font-size="20" font-weight="600" fill="#121A24" font-family="ui-monospace,Menlo,monospace">' + v + '</text>' +
+    '<text x="48" y="64" text-anchor="middle" font-size="9.5" fill="#8B96A3">综合评分</text>' +
+    '</svg>' +
+    '<div class="gauge-meta"><div class="big">' + v + '<span> / 100</span></div>' +
+    '<div class="tag" style="background:' + bg + '">' + tone + '</div>' +
+    '<p>' + t.events.length + ' 项待处理，其中高优先级 ' + t.alerts[0] + ' 项</p></div>';
+
+  $('#sysList').innerHTML = t.subsys.map(function (s) {
+    return '<div class="sys-row"><span class="n">' + s[0] + '</span>' +
+      '<span class="bar"><i class="' + s[2] + '" style="width:' + s[1] + '%"></i></span>' +
+      '<span class="p">' + s[1] + '</span></div>';
+  }).join('');
+}
+
+function renderEvents(){
+  const t = T();
+  $('#evList').innerHTML = t.events.map(function (e) {
+    return '<div class="ev" data-ev="' + e.id + '">' +
+      '<span class="dot ' + e.lv + '"></span>' +
+      '<span class="t"><b>' + e.title + '</b><span>' + e.sys + ' · ' + e.detail.slice(0, 22) + '…</span></span>' +
+      '<span class="m">' + e.val + '<em>' + e.time + '</em></span></div>';
+  }).join('');
+  $$('.ev').forEach(function (el) {
+    el.addEventListener('click', function () {
+      $$('.ev').forEach(function (x) { x.classList.remove('sel'); });
+      el.classList.add('sel');
+      runDiag(el.dataset.ev);
+    });
+  });
+}
+
+function renderInsight(){
+  const t = T();
+  const top = t.events[0];
+  $('#insight').innerHTML = '当前车组最需要处理的是 <b style="color:var(--ink)">' + top.title + '</b>。' +
+    '按剩余寿命模型推算，若 48 小时内不处理，' + (top.sys === '走行部' ? '轴箱温升与振动将进入加速劣化段' : '劣化速率将上升约 40%') + '，' +
+    '建议在今晚的库停窗口内安排，可与相邻工单合并以减少一次扣车。';
+}
+
+function renderTasks(){
+  const t = T();
+  const rows = [
+    ['T-1042', '2 轴轴箱', '振动 + 温度', '李工', '09:00 - 09:40', 'done'],
+    ['T-1043', '1 位牵引电机', '红外测温', '张工', '09:20 - 10:00', 'run'],
+    ['T-1044', '5 车制动缸', '压力校验', '王工', '10:00 - 10:30', 'wait'],
+    ['T-1045', '受电弓滑板', '磨耗测量', '李工', '10:10 - 10:40', 'wait'],
+    ['T-1046', '轮对踏面', '影像巡检', '机器视觉', '10:30 - 11:20', 'run'],
+    ['T-1047', '车门密封条', '阻力测试', '赵工', '11:00 - 11:30', 'wait']
+  ];
+  const map = { done: ['已完成', 'ok'], run: ['执行中', 'info'], wait: ['待执行', 'gray'] };
+  $('#taskBody').innerHTML = rows.map(function (r) {
+    const m = map[r[5]];
+    return '<tr><td class="num">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] +
+      '</td><td class="num">' + r[4] + '</td><td><span class="badge ' + m[1] + '">' + m[0] + '</span></td></tr>';
+  }).join('');
+  $('#taskSub').textContent = t.tasks[1] + ' 项 · 已完成 ' + t.tasks[0];
+}
+
+function renderOrders(){
+  const map = { '执行中': 'info', '待接单': 'warn', '已完成': 'ok' };
+  $('#orderList').innerHTML = state.orders.map(function (o) {
+    return '<div class="order"><div class="oh"><span class="id">' + o.id + '</span>' +
+      '<span class="badge ' + (map[o.st] || 'gray') + '" style="margin-left:auto">' + o.st + '</span></div>' +
+      '<h4>' + o.title + '</h4><p>' + o.from + '</p>' +
+      '<div class="of"><span>' + o.who + '</span><span style="margin-left:auto">' + o.eta + '</span></div></div>';
+  }).join('');
+  $('#orderSub').textContent = state.orders.filter(function (o) { return o.st !== '已完成'; }).length + ' 张进行中 · 共 ' + state.orders.length + ' 张';
+}
+
+const DOCS = [
+  ['《CRH-380B 走行部检修规程》4.2 轴箱轴承', '振动 RMS 超过 4.5 mm/s 或出现 160-180Hz 特征峰时，判定为早期磨损，须在 72 小时内更换。', 'PDF · 38 页', '2024 版'],
+  ['工单 #4821 · 03 车 2 轴轴箱异音处理', '更换轴箱轴承一套，旧件拆检发现滚子点蚀，润滑脂乳化。处理时长 3.5h。', '工单档案', '2025-08-12'],
+  ['故障案例：轴箱轴承早期磨损的振动特征', '同型号车组 12 起案例中，9 起在报警前 5-8 天已出现边频带能量抬升。', '案例库', '知识沉淀'],
+  ['《牵引电机温升异常排查指引》', '定子温度持续高于 105℃ 时，依次排查冷却风道堵塞、风机电流、环境温度补偿。', 'PDF · 12 页', '2024 版'],
+  ['CRH-380B 制动系统压力波动分析报告', '缓解阶段 ±0.05 MPa 内属正常，超出后优先检查传感器与中继阀。', '分析报告', '2025-11-02']
+];
+
+function renderDocs(kw){
+  const list = DOCS.filter(function (d) {
+    if (!kw) return true;
+    return (d[0] + d[1]).toLowerCase().indexOf(kw.toLowerCase()) >= 0;
+  });
+  $('#docList').innerHTML = list.length ? list.map(function (d) {
+    return '<div class="doc" data-doc="' + d[0] + '"><h4>' + d[0] + '</h4><p>' + d[1] + '</p>' +
+      '<div class="meta"><span>' + d[2] + '</span><span>' + d[3] + '</span></div></div>';
+  }).join('') : '<div style="padding:24px;text-align:center;color:var(--ink-3);font-size:12.5px">没有匹配的文档</div>';
+}
+
+function renderTrainMenu(){
+  $('#trainMenu').innerHTML = Object.keys(TRAINS).map(function (k) {
+    const t = TRAINS[k];
+    const total = t.alerts[0] + t.alerts[1] + t.alerts[2];
+    const cls = t.health >= 90 ? '' : t.health >= 80 ? 'warn' : 'bad';
+    return '<button data-train="' + k + '" class="' + (k === state.train ? 'on' : '') + '">' +
+      '<span>' + k + '</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink-3);font-size:11px">' +
+      total + ' 告警<span class="dot ' + cls + '"></span></span></button>';
+  }).join('');
+  $$('#trainMenu button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      setTrain(b.dataset.train);
+      $('#trainSel').classList.remove('open');
+    });
+  });
+  $('#trainName').textContent = state.train;
+}
+
+function setTrain(k){
+  state.train = k;
+  renderMetrics(); renderChart(); renderGauge(); renderEvents(); renderInsight(); renderTasks();
+  renderTrainMenu(); renderOrders();
+  $('#msgs').innerHTML = '';
+  const t = T();
+  botSay('已切换至 <b>' + t.code + '</b>（' + t.line + '）。当前健康度 ' + t.health + '，待确认告警 ' +
+    (t.alerts[0] + t.alerts[1] + t.alerts[2]) + ' 条。你可以点左侧事件让我诊断，或直接描述现象。');
+}
+
+/* ---------------- 智能体 ---------------- */
+const msgs = $('#msgs');
+let pending = null;
+
+function scrollMsgs(){ msgs.scrollTop = msgs.scrollHeight; }
+
+function timeNow(){
+  const d = new Date();
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
+
+function appendUser(text){
+  const el = document.createElement('div');
+  el.className = 'msg-u';
+  el.textContent = text;
+  msgs.appendChild(el);
+  scrollMsgs();
+}
+
+function botSay(html){
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-a';
+  wrap.innerHTML = '<div class="lead"><i></i>运维智能体 · ' + timeNow() + '</div>' +
+    '<div class="answer">' + html + '</div>';
+  msgs.appendChild(wrap);
+  scrollMsgs();
+  return wrap;
+}
+
+async function typeInto(el, text){
+  const lines = text.split('\n');
+  for (let li = 0; li < lines.length; li++){
+    const line = document.createElement('div');
+    if (li) line.style.marginTop = '5px';
+    el.appendChild(line);
+    const s = lines[li];
+    for (let i = 0; i < s.length; i++){
+      line.textContent += s[i];
+      if (i % 4 === 0){ await sleep(8); scrollMsgs(); }
+    }
+    await sleep(40);
+  }
+}
+
+async function runFlow(f){
+  if (state.busy){ pending = f; toast('已排队，处理完上一条继续'); return; }
+  state.busy = true;
+  $('#send').disabled = true;
+  if (window.innerWidth <= 1320) $('#agent').classList.add('open');
+
+  appendUser(f.q);
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-a';
+  wrap.innerHTML = '<div class="lead"><i></i>运维智能体 · ' + timeNow() + '</div><div class="steps"></div>';
+  msgs.appendChild(wrap);
+  scrollMsgs();
+  const box = wrap.querySelector('.steps');
+
+  for (const s of f.steps){
+    const el = document.createElement('div');
+    el.className = 'step running';
+    el.innerHTML = '<span class="ic"></span><span class="tx">' + s[0] + (s[1] ? '<code>' + s[1] + '</code>' : '') + '</span>';
+    box.appendChild(el);
+    scrollMsgs();
+    await sleep(s[2]);
+    el.classList.remove('running');
+  }
+
+  const ans = document.createElement('div');
+  ans.className = 'answer';
+  wrap.appendChild(ans);
+  await typeInto(ans, f.answer);
+
+  const foot = document.createElement('div');
+  foot.className = 'conf';
+  foot.innerHTML = '<span>置信度 ' + Math.round(f.conf * 100) + '%</span>' +
+    '<span class="cbar"><i style="width:' + (f.conf * 100) + '%;background:' + (f.conf > 0.85 ? GREEN : f.conf > 0.75 ? AMBER : RED) + '"></i></span>' +
+    '<span style="margin-left:auto">依据 ' + f.evi.length + ' 条</span>';
+  ans.appendChild(foot);
+
+  if (f.evi && f.evi.length){
+    const evi = document.createElement('div');
+    evi.className = 'evi';
+    evi.innerHTML = f.evi.map(function (e) {
+      return '<button data-evi="' + e + '">' + e + '</button>';
+    }).join('');
+    wrap.appendChild(evi);
+    $$('button[data-evi]', evi).forEach(function (b) {
+      b.addEventListener('click', function () { openEvidence(b.dataset.evi); });
+    });
+  }
+
+  if (f.acts && f.acts.length){
+    const acts = document.createElement('div');
+    acts.className = 'acts';
+    acts.innerHTML = f.acts.map(function (a, i) {
+      return '<button class="btn ' + (a[1] || '') + '" data-act="' + i + '">' + a[0] + '</button>';
+    }).join('');
+    wrap.appendChild(acts);
+    $$('button[data-act]', acts).forEach(function (b, i) {
+      b.addEventListener('click', function () {
+        const a = f.acts[i];
+        if (a[0].indexOf('派单') >= 0 || a[0].indexOf('派发') >= 0){ confirmOrder(f, b); }
+        else if (a[0].indexOf('导出') >= 0 || a[0].indexOf('下载') >= 0){ toast('已生成日报 PDF（演示环境不产生真实文件）'); }
+        else if (a[0].indexOf('依据') >= 0){ openEvidence(f.evi[0]); }
+        else { toast('演示版：' + a[0] + ' 已记录'); }
+      });
+    });
+  }
+
+  state.busy = false;
+  $('#send').disabled = false;
+  scrollMsgs();
+  if (pending){ const p = pending; pending = null; setTimeout(function () { runFlow(p); }, 160); }
+}
+
+function confirmOrder(f, btn){
+  if (btn.dataset.done) return;
+  btn.dataset.done = '1';
+  btn.textContent = '已派单';
+  btn.className = 'btn';
+  btn.disabled = true;
+  const n = Math.floor(Math.random() * 90) + 4900;
+  state.orders.unshift({
+    id: 'WO-' + n,
+    title: (f.orderTitle || '现场处理任务'),
+    from: '智能体建议 · 已人工确认',
+    st: '待接单',
+    who: '待分配',
+    eta: '今日 20:00 前'
+  });
+  renderOrders();
+  toast('工单 WO-' + n + ' 已创建并推送到检修班组');
+}
+
+const SYSTXT = {
+  '走行部': '判定为轴承类早期磨损，不是轨道激励。依据是 168Hz 特征峰与轴箱温升同步抬升，而横向加速度无对应突变。建议 48 小时内更换轴箱轴承，同时检查同轴另一侧润滑脂是否乳化；更换前该车限速 200km/h 运行。',
+  '牵引系统': '判定为散热能力下降，暂不支持绕组绝缘故障——三相电流平衡、无局部过热点。建议先做冷却风道吹扫与滤网更换（约 40 分钟，不扣车），24 小时后若定子温度仍高于 105℃，再安排电机下车检查。',
+  '制动系统': '判定为传感器零点漂移或中继阀响应迟滞，制动能力未下降。建议先做压力传感器零点校验，15 分钟即可完成，无需扣车；未复现再排查中继阀。',
+  '车体车门': '判定为密封条老化导致关闭阻力上升，属于可延迟项。建议下次库停时润滑导轨并更换对应密封条，不影响今日运用。'
+};
+
+function diagFlow(evId){
+  const t = T();
+  const e = t.events.filter(function (x) { return x.id === evId; })[0] || t.events[0];
+  const conf = e.lv === 'high' ? 0.87 : e.lv === 'mid' ? 0.79 : 0.72;
+  return {
+    q: '诊断：' + e.title,
+    steps: [
+      ['读取 ' + e.sys + ' 时序与工况数据', 'sensor.query', 480],
+      ['与同型号车组、同工况基线比对', 'feature.baseline', 560],
+      ['检索检修规程与同类工单', 'rag.search', 620],
+      ['评估劣化速率并生成处置建议', 'model.rul', 700]
+    ],
+    answer: e.detail + '\n' +
+      (SYSTXT[e.sys] || '建议先补充一次复测，确认信号可复现后再定处置方案。') + '\n' +
+      '当前值 ' + e.val + '／阈值 ' + e.thr + '，' + (e.lv === 'high' ? '已进入需立即处置区间。' : '仍在可控区间，可按计划窗口处理。'),
+    conf: conf,
+    evi: ['工单 #4821', '检修规程 4.2', '08:54 波形'],
+    acts: [['确认派单', 'primary'], ['看依据', '']],
+    orderTitle: e.title.replace(/^\d+\s*车\s*/, '').replace('超限', '处理')
+  };
+}
+
+const FLOWS = {
+  report: {
+    q: '生成今日检修建议',
+    steps: [
+      ['汇总当日传感器与巡检数据', 'sensor.rollup', 460],
+      ['计算各子系统健康度与劣化速率', 'model.health', 600],
+      ['检索规程阈值与历史处置方式', 'rag.search', 620],
+      ['编排检修窗口与备件', 'planner.schedule', 720]
+    ],
+    answer: '今日（11-06 · ' + '京沪高铁）建议按以下优先级处理：\n' +
+      '1. 2 轴轴箱轴承更换 —— 高优先级，今晚库停窗口执行，预计 3.5 小时，备件已在段内库。\n' +
+      '2. 牵引电机冷却风道吹扫 —— 中优先级，可并入同一窗口，加 40 分钟。\n' +
+      '3. 制动缸压力传感器校验 —— 低优先级，明日白班处理即可。\n' +
+      '三项合并执行可少扣一次车，对运用影响约 0 小时。',
+    conf: 0.89,
+    evi: ['检修规程 4.2', '工单 #4821', '备件库存'],
+    acts: [['确认派单', 'primary'], ['导出 PDF', '']]
+  },
+  plan: {
+    q: '排本周巡检计划',
+    steps: [
+      ['读取本周库停窗口与运用计划', 'ops.schedule', 480],
+      ['匹配待执行检测项与人员技能', 'planner.match', 640],
+      ['校验备件与工装可用性', 'stock.check', 560]
+    ],
+    answer: '本周共有 4 个可用库停窗口（周一、周三、周五夜间及周日白班），已排入 27 项检测任务：\n' +
+      '· 走行部：轮对踏面影像巡检 3 组、轴箱温度普查 1 次\n' +
+      '· 牵引系统：冷却风道吹扫 2 台、风机电流测试 4 台\n' +
+      '· 制动系统：压力传感器校验 6 个、闸片磨耗测量 12 处\n' +
+      '高优先级项集中在周三夜窗，需要走行组 2 人 + 制动组 1 人，工装已预留。',
+    conf: 0.84,
+    evi: ['运用计划 11 月', '人员排班表', '备件清单'],
+    acts: [['写入排程', 'primary'], ['调整窗口', '']]
+  },
+  export: {
+    q: '导出日报',
+    steps: [
+      ['汇总当日告警、检测、工单数据', 'report.collect', 520],
+      ['生成图表与结论段落', 'report.render', 700]
+    ],
+    answer: '今日运维日报已生成，共 5 个章节：\n' +
+      '1. 车组健康度概览（92 分，环比 −1.2）\n' +
+      '2. 告警清单与处置状态（3 条，2 条已派单）\n' +
+      '3. 检测任务完成情况（128/140，91.4%）\n' +
+      '4. 预测性维护提示（72 小时内风险件 2 个）\n' +
+      '5. 需上级协调事项（1 项：轴箱轴承备件跨段调拨）\n' +
+      '演示环境下不产生真实文件，正式版会直出 PDF 并归档到知识库。',
+    conf: 0.93,
+    evi: ['日报模板 V3', '告警明细'],
+    acts: [['下载 PDF', 'primary'], ['分享到班组', '']]
+  },
+  compare: {
+    q: '三车组横向对比',
+    steps: [
+      ['拉取三车组近 7 天指标', 'fleet.compare', 620],
+      ['对齐工况差异并归一化', 'feature.normalize', 640]
+    ],
+    answer: '近 7 天三车组横向对比：\n' +
+      '· CRH-380B / 03：健康度 92，振动与温升同时抬头，是唯一出现双指标联动的车组，优先处理。\n' +
+      '· CRH-380B / 07：健康度 96，表现最稳，仅齿轮箱油温受散热片积尘影响。\n' +
+      '· HXD3-2201：健康度 81，走行部已跌到 68，踏面剥离与风机电流异常叠加，建议本周内扣修。\n' +
+      '共性问题是冷却风道积尘，建议在换季保养中统一加一次吹扫项。',
+    conf: 0.86,
+    evi: ['车队长看板', '巡检影像 11-06'],
+    acts: [['导出对比表', 'primary']]
+  },
+  orders: {
+    q: '现在有哪些工单',
+    steps: [['查询工单系统', 'ticket.list', 420]],
+    answer: '当前共 3 张工单：WO-4821 执行中（轴箱轴承更换，李工）、WO-4818 待接单（冷却风道清灰）、WO-4809 已完成（制动缸传感器校验）。需要我把未接单的那张改派给夜班吗？',
+    conf: 0.95,
+    evi: ['工单系统'],
+    acts: [['改派夜班', 'primary'], ['打开工单页', '']]
+  }
+};
+
+function route(text){
+  const s = text.trim();
+  if (!s) return null;
+  if (/振|轴箱|轴承|异音/.test(s)) return diagFlow('E1');
+  if (/温|电机|过热/.test(s)) return diagFlow('E2');
+  if (/制动|压力|闸/.test(s)) return diagFlow('E3');
+  if (/报告|日报|导出/.test(s)) return FLOWS.report;
+  if (/计划|排程|巡检|排班/.test(s)) return FLOWS.plan;
+  if (/对比|横向|车队|其他车/.test(s)) return FLOWS.compare;
+  if (/工单/.test(s)) return FLOWS.orders;
+  if (/你好|hi|hello|在吗/i.test(s)) return {
+    q: s,
+    steps: [['读取当前车组上下文', 'ctx.load', 360]],
+    answer: '在。当前 ' + T().code + ' 健康度 ' + T().health + '，有 ' + T().events.length + ' 条待处理事件。你可以直接说「2 轴箱为什么报警」，也可以让我排今天的检修顺序。',
+    conf: 0.99, evi: [], acts: []
+  };
+  return {
+    q: s,
+    steps: [['解析意图', 'router', 380], ['检索可用工具与数据', 'tool.search', 520]],
+    answer: '这个问题我还缺一点上下文。可以这样问我：\n' +
+      '· 「2 轴箱为什么报警」—— 走根因诊断\n' +
+      '· 「今天先修哪个」—— 给处置优先级\n' +
+      '· 「排本周巡检计划」—— 排程\n' +
+      '· 「导出日报」—— 出报告\n' +
+      '也可以直接在左边点一条告警，我按那条展开。',
+    conf: 0.55, evi: [], acts: []
+  };
+}
+
+function runDiag(evId){ runFlow(diagFlow(evId)); }
+
+/* ---------------- 依据抽屉 ---------------- */
+function waveform(){
+  let pts = '', seed = 7;
+  for (let i = 0; i <= 120; i++){
+    seed = (seed * 9301 + 49297) % 233280;
+    const r = seed / 233280;
+    const base = Math.sin(i / 6) * 10;
+    const spike = (i % 17 === 0) ? (r - 0.3) * 26 : 0;
+    pts += (i * 4) + ',' + (48 - base - spike + (r - 0.5) * 5) + ' ';
+  }
+  return '<svg width="100%" height="96" viewBox="0 0 480 96" preserveAspectRatio="none" style="background:#F7F9FB;border:1px solid #E3E8EF;border-radius:8px">' +
+    '<line x1="0" y1="48" x2="480" y2="48" stroke="#E3E8EF"/>' +
+    '<polyline points="' + pts + '" fill="none" stroke="#2C7CC2" stroke-width="1.2"/></svg>';
+}
+
+function openEvidence(label){
+  let title = label, body = '';
+  if (/工单/.test(label)){
+    body = '<div class="q">WO-4821 · 03 车 2 轴轴箱异音处理 · 2025-08-12 已完成</div>' +
+      '<h4>处置内容</h4>更换轴箱轴承一套，旧件拆检发现滚子点蚀、润滑脂乳化。<br>' +
+      '<h4>处理时长</h4>3.5 小时（含落轮、压装、复测）<br>' +
+      '<h4>复测结果</h4>振动 RMS 由 5.4 降至 2.9 mm/s，轴箱温差回到 4℃ 以内。<br>' +
+      '<h4>可复用经验</h4>同轴另一侧虽未报警，但润滑脂同样存在轻微乳化，建议成对检查。';
+  } else if (/规程|手册/.test(label)){
+    body = '<div class="q">《CRH-380B 走行部检修规程》2024 版 · 4.2 轴箱轴承</div>' +
+      '<h4>4.2.1 判定阈值</h4>振动 RMS 超过 4.5 mm/s，或在 160–180 Hz 出现稳定特征峰，判定为早期磨损。<br>' +
+      '<h4>4.2.2 处置要求</h4>判定后 72 小时内更换，更换前限速 200 km/h。<br>' +
+      '<h4>4.2.3 检查项</h4>同轴另一侧轴承、润滑脂状态、密封罩、接地装置碳刷磨耗。';
+  } else if (/波形/.test(label)){
+    title = '08:54 轴箱振动波形（截取 4s）';
+    body = '<h4>时域波形</h4>' + waveform() +
+      '<h4>特征提取</h4><table><tr><td>RMS</td><td>5.2 mm/s</td><td>阈值 4.5</td></tr>' +
+      '<tr><td>主频</td><td>168 Hz</td><td>轴承外圈特征频率</td></tr>' +
+      '<tr><td>边频带能量</td><td>+38%</td><td>较 7 天均值</td></tr>' +
+      '<tr><td>轴箱温差</td><td>+6 ℃</td><td>同轴另一侧</td></tr></table>';
+  } else if (/备件/.test(label)){
+    body = '<h4>备件可用性</h4><table><tr><td>轴箱轴承 TAROL 130</td><td>本段库 2 套</td><td>可用</td></tr>' +
+      '<tr><td>密封罩</td><td>本段库 6 件</td><td>可用</td></tr>' +
+      '<tr><td>润滑脂 Shell 3346</td><td>本段库 12 kg</td><td>可用</td></tr></table>' +
+      '<p style="margin-top:10px">若需成对更换，另一侧轴承需从徐州东库调拨，预计 6 小时到段。</p>';
+  } else if (/排班|人员/.test(label)){
+    body = '<h4>本周可用人员</h4><table><tr><td>走行组</td><td>李工、张工（夜班）</td><td>可排</td></tr>' +
+      '<tr><td>制动组</td><td>王工</td><td>周三后可用</td></tr>' +
+      '<tr><td>电气组</td><td>赵工</td><td>可排</td></tr></table>';
+  } else if (/计划|影像/.test(label)){
+    body = '<h4>' + label + '</h4>该依据指向原始数据源，正式版会直接打开对应页面（运用计划表、巡检影像原图或模型版本记录）。<br>' +
+      '<div class="q">演示环境仅示意跳转位置，不加载真实数据。</div>';
+  } else {
+    body = '<h4>' + label + '</h4>已引用该依据，正式版会展示原文片段与数据快照。';
+  }
+  $('#modalTitle').textContent = title;
+  $('#modalBody').innerHTML = body;
+  $('#mask').classList.add('on');
+}
+
+/* ---------------- 其他交互 ---------------- */
+function toast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(function () {
+    el.style.transition = 'opacity .3s';
+    el.style.opacity = '0';
+    setTimeout(function () { el.remove(); }, 320);
+  }, 2400);
+}
+
+function switchView(v){
+  if (v === 'settings'){ toast('演示版：设置面板暂未开放'); return; }
+  state.view = v;
+  $$('.view').forEach(function (s) { s.classList.remove('on'); });
+  const el = $('#view-' + v);
+  if (el) el.classList.add('on');
+  $$('.rail-btn').forEach(function (b) { b.classList.toggle('on', b.dataset.view === v); });
+}
+
+function init(){
+  renderMetrics(); renderGauge(); renderEvents(); renderInsight();
+  renderTasks(); renderOrders(); renderTrainMenu(); renderDocs('');
+  requestAnimationFrame(renderChart);
+
+  $('#trainSel').addEventListener('click', function (e) {
+    if (e.target.closest('.sel-menu')) return;
+    $('#trainSel').classList.toggle('open');
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('#trainSel')) $('#trainSel').classList.remove('open');
+  });
+
+  $$('#rangeSeg button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      $$('#rangeSeg button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      state.range = parseInt(b.dataset.range, 10);
+      renderChart();
+    });
+  });
+
+  $$('.rail-btn').forEach(function (b) {
+    b.addEventListener('click', function () { switchView(b.dataset.view); });
+  });
+
+  $$('.chip[data-flow]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const k = b.dataset.flow;
+      if (FLOWS[k]) runFlow(FLOWS[k]);
+    });
+  });
+
+  $('#evAll').addEventListener('click', function () { switchView('tasks'); });
+
+  $('#send').addEventListener('click', function () {
+    const v = $('#input').value;
+    const f = route(v);
+    if (!f) return;
+    $('#input').value = '';
+    runFlow(f);
+  });
+  $('#input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter'){
+      const v = $('#input').value;
+      const f = route(v);
+      if (!f) return;
+      $('#input').value = '';
+      runFlow(f);
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault(); $('#input').focus();
+    }
+    if (e.key === 'Escape'){ $('#mask').classList.remove('on'); }
+  });
+
+  $('#clearMsgs').addEventListener('click', function () { greet(); });
+  $('#agentFab').addEventListener('click', function () { $('#agent').classList.toggle('open'); });
+  $('#modalX').addEventListener('click', function () { $('#mask').classList.remove('on'); });
+  $('#mask').addEventListener('click', function (e) { if (e.target.id === 'mask') $('#mask').classList.remove('on'); });
+
+  $('#kbBtn').addEventListener('click', function () { renderDocs($('#kbInput').value.trim()); });
+  $('#kbInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') renderDocs($('#kbInput').value.trim());
+  });
+  $('#docList').addEventListener('click', function (e) {
+    const d = e.target.closest('.doc');
+    if (d) openEvidence(d.dataset.doc);
+  });
+
+  let n = 0;
+  setInterval(function () {
+    const d = new Date();
+    $('#clock').textContent = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+  }, 20000);
+  $('#clock').textContent = timeNow();
+
+  let resizeT;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(renderChart, 140);
+  });
+
+  greet();
+}
+
+function greet(){
+  msgs.innerHTML = '';
+  const t = T();
+  botSay('早上好。' + t.code + ' 目前健康度 <b style="color:' + (t.health >= 90 ? GREEN : AMBER) + '">' + t.health + '</b>，' +
+    '有 ' + t.events.length + ' 条待处理事件，其中最需要关注的是「' + t.events[0].title + '」。<br>' +
+    '点左侧事件我可以直接给诊断；也可以问我「今天先修哪个」「排本周巡检计划」。');
+}
+
+init();
+</script>
+</body>
+</html>
