@@ -24,6 +24,7 @@ body{
   margin:0;background:var(--bg);color:var(--ink);
   font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
   font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border:0;background:none;}
 ::-webkit-scrollbar{width:8px;height:8px;}
@@ -142,21 +143,21 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border
 /* events */
 .ev-list{display:flex;flex-direction:column;}
 .ev{
-  display:grid;grid-template-columns:14px minmax(0,1fr) auto;align-items:center;gap:9px;
+  display:flex;align-items:center;gap:9px;flex:0 0 auto;
   padding:8px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:6px;transition:background .12s;
 }
 .ev:first-child{border-top:0;}
 .ev:hover{background:var(--surface-2);}
 .ev.sel{background:var(--brand-soft);}
-.ev .dot{width:7px;height:7px;border-radius:50%;justify-self:center;}
+.ev .dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;}
 .ev .dot.high{background:var(--red);box-shadow:0 0 0 3px rgba(195,60,55,.12);}
 .ev .dot.mid{background:#E09B1A;box-shadow:0 0 0 3px rgba(224,155,26,.14);}
 .ev .dot.low{background:#4C8FD1;box-shadow:0 0 0 3px rgba(76,143,209,.12);}
-.ev .t{min-width:0;}
-.ev .t b{display:block;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ev .t span{font-size:11px;color:var(--ink-3);}
-.ev .m{font-size:11px;color:var(--ink-2);font-family:var(--mono);text-align:right;white-space:nowrap;}
-.ev .m em{display:block;font-style:normal;color:var(--ink-3);font-family:inherit;font-size:10.5px;}
+.ev .t{flex:1 1 auto;min-width:0;display:block;overflow:hidden;}
+.ev .t b{display:block;font-size:12.5px;line-height:1.6;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ev .t span{display:block;font-size:11px;line-height:1.55;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ev .m{flex:0 0 auto;font-size:11px;line-height:1.55;color:var(--ink-2);font-family:var(--mono);text-align:right;white-space:nowrap;}
+.ev .m em{display:block;font-style:normal;color:var(--ink-3);font-family:inherit;font-size:10.5px;line-height:1.5;}
 
 /* subsystem */
 .sys{display:flex;flex-direction:column;gap:9px;margin-top:2px;}
@@ -181,6 +182,22 @@ td.num{font-family:var(--mono);font-size:11.5px;}
 .badge.bad{background:var(--red-soft);color:var(--red);border-color:#F1C6C4;}
 .badge.info{background:var(--brand-soft);color:var(--brand);border-color:#CDE0F1;}
 .badge.gray{background:var(--surface-3);color:var(--ink-2);border-color:var(--line);}
+
+/* 任务页：字号放大，行距撑开，表格铺满可视高度 */
+#view-tasks.on{display:flex;flex-direction:column;}
+#view-tasks .card{flex:1 1 auto;display:flex;flex-direction:column;padding:16px 18px 14px;}
+#view-tasks .card-h{margin-bottom:14px;}
+#view-tasks .card-h h3{font-size:15px;}
+#view-tasks .card-h .sub{font-size:12.5px;}
+#view-tasks table{font-size:14.5px;}
+#view-tasks th{font-size:12.5px;letter-spacing:.3px;padding:10px 12px;}
+#view-tasks td{padding:15px 12px;}
+#view-tasks td.num{font-size:13.5px;}
+#view-tasks .badge{font-size:11.5px;padding:3px 10px;}
+@media (max-width:900px){
+  #view-tasks.on{display:block;}
+  #view-tasks table{flex:none;}
+}
 
 /* orders */
 .orders{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
@@ -355,23 +372,42 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
 .phm-tools .val{font-family:var(--mono);font-size:12px;color:var(--brand);min-width:86px;}
 .phm-tools input[type=range]{flex:1;min-width:160px;accent-color:var(--brand);}
 .phm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
-.phm-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;}
+.phm-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;min-height:0;}
 .phm-card .h{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
-.phm-card .h b{font-size:13px;font-weight:600;}
-.phm-card .h span{font-size:11px;color:var(--ink-3);}
+.phm-card .h b{font-size:14px;font-weight:600;}
+.phm-card .h span{font-size:11.5px;color:var(--ink-3);}
 .phm-card .h .badge{margin-left:auto;}
 .phm-mini{width:100%;height:104px;display:block;}
 .rul{display:flex;align-items:baseline;gap:6px;margin-top:8px;}
 .rul b{font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.5px;}
 .rul span{font-size:11px;color:var(--ink-3);}
-.phm-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:11px;color:var(--ink-3);}
-.phm-meta b{color:var(--ink-2);font-weight:500;font-family:var(--mono);font-size:11.5px;}
+.phm-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:11.5px;color:var(--ink-3);}
+.phm-meta b{color:var(--ink-2);font-weight:500;font-family:var(--mono);font-size:12px;}
 .phm-warn{display:flex;align-items:center;gap:12px;background:var(--amber-soft);border:1px solid #EFD9AE;border-radius:var(--r);padding:11px 14px;margin-top:10px;}
 .phm-warn.bad{background:var(--red-soft);border-color:#F1C6C4;}
 .phm-warn .wt{flex:1;min-width:0;}
 .phm-warn .wt b{display:block;font-size:12.5px;color:var(--ink);}
 .phm-warn .wt span{font-size:11.5px;color:var(--ink-2);}
+
+/* 预测页：三块面板撑满可视高度，折线区拉成竖长方形 */
+#view-phm.on{display:flex;flex-direction:column;gap:10px;}
+#view-phm .phm-tools{margin-bottom:0;flex:0 0 auto;}
+#view-phm .phm-grid{flex:1 1 auto;min-height:360px;}
+#view-phm .phm-card{padding:14px 16px;}
+#view-phm .phm-mini{flex:1 1 0;height:auto;min-height:200px;}
+#view-phm .rul{margin-top:12px;}
+#view-phm .rul b{font-size:28px;}
+#view-phm .phm-meta{margin-top:9px;gap:14px;}
+#view-phm .phm-warn{margin-top:0;flex:0 0 auto;}
+
 @media (max-width:1100px){.phm-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:1100px){
+  #view-phm.on{display:block;}
+  #view-phm .phm-grid{min-height:0;}
+  #view-phm .phm-mini{flex:none;height:150px;min-height:0;}
+  #view-phm .phm-warn{margin-top:10px;}
+  #view-phm .phm-tools{margin-bottom:10px;}
+}
 @media (max-width:900px){.vis-grid,.ac-grid,.phm-grid{grid-template-columns:minmax(0,1fr);}.phm-tools input[type=range]{min-width:120px;}}
 /* ---------- 现场模式（手套 / 嘈杂环境） ---------- */
 #view-field{padding:16px 20px;overflow-y:auto;}
@@ -455,80 +491,6 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
   .act-stop{min-height:124px;}
 }
 
-/* ---------- 登录 / 身份 ---------- */
-.login{position:fixed;inset:0;z-index:120;display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);background:var(--surface);overflow:auto;}
-.login.hide{display:none;}
-.lg-l{background:var(--brand);color:#fff;padding:44px 46px 32px;display:flex;flex-direction:column;position:relative;}
-.lg-l::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:30px 30px;}
-.lg-brand{display:flex;align-items:center;gap:10px;position:relative;z-index:1;}
-.lg-brand .m{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex:none;}
-.lg-brand .m svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
-.lg-brand b{font-size:14px;font-weight:600;letter-spacing:.3px;}
-.lg-brand span{font-size:11px;color:rgba(255,255,255,.6);border-left:1px solid rgba(255,255,255,.24);padding-left:8px;margin-left:2px;letter-spacing:.5px;}
-.lg-h1{margin:54px 0 0;font-size:27px;line-height:1.45;font-weight:600;letter-spacing:.6px;position:relative;z-index:1;}
-.lg-p{margin:14px 0 0;font-size:12.5px;line-height:1.9;color:rgba(255,255,255,.72);max-width:410px;position:relative;z-index:1;}
-.lg-steps{margin:auto 0 0;display:flex;flex-direction:column;gap:14px;position:relative;z-index:1;padding-top:40px;}
-.lg-step{display:flex;gap:12px;align-items:flex-start;}
-.lg-step .n{font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,.48);padding-top:2px;letter-spacing:.5px;}
-.lg-step .b b{display:block;font-size:12.5px;font-weight:600;letter-spacing:.5px;}
-.lg-step .b i{font-style:normal;font-size:11.5px;color:rgba(255,255,255,.64);line-height:1.6;}
-.lg-note{font-size:10.5px;color:rgba(255,255,255,.4);padding-top:26px;position:relative;z-index:1;letter-spacing:.4px;}
-.lg-r{display:flex;align-items:center;justify-content:center;padding:36px 32px;}
-.lg-card{width:min(378px,100%);}
-.lg-t{font-size:19px;font-weight:600;letter-spacing:.4px;}
-.lg-s{font-size:12px;color:var(--ink-3);margin-top:6px;line-height:1.7;}
-.lg-f{display:block;border:1px solid var(--line-2);border-radius:9px;background:var(--surface);padding:8px 12px;margin-top:13px;transition:.15s;position:relative;}
-.lg-f:focus-within{border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(44,124,194,.12);}
-.lg-f>span{display:block;font-size:10.5px;color:var(--ink-3);letter-spacing:.4px;}
-.lg-f input{width:100%;border:0;outline:0;background:none;font-family:inherit;font-size:14px;color:var(--ink);padding:2px 0 0;letter-spacing:.5px;}
-.lg-f input::placeholder{color:#B6C0CB;font-size:12.5px;letter-spacing:0;}
-.lg-f.pw input{padding-right:44px;}
-.lg-eye{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--ink-3);padding:3px 5px;border-radius:5px;}
-.lg-eye:hover{color:var(--brand);background:var(--brand-soft);}
-.lg-msg{font-size:11.5px;color:var(--ink-3);min-height:19px;margin-top:9px;line-height:1.6;}
-.lg-msg.bad{color:var(--red);}
-.lg-msg.ok{color:var(--green);}
-.lg-msg.hint{color:var(--ink-2);}
-.lg-msg button{color:var(--brand);text-decoration:underline;font-size:11.5px;margin-left:5px;}
-.lg-sub{width:100%;height:42px;border-radius:9px;background:var(--brand);color:#fff;font-size:14px;font-weight:500;letter-spacing:2px;transition:.15s;margin-top:4px;}
-.lg-sub:hover{background:#0E477A;}
-.lg-sub:disabled{background:#9DB5CB;cursor:not-allowed;}
-.lg-or{display:flex;align-items:center;gap:10px;margin:22px 0 12px;font-size:10.5px;color:var(--ink-3);letter-spacing:.3px;}
-.lg-or::before,.lg-or::after{content:"";height:1px;background:var(--line);flex:1;}
-.lg-accs{display:grid;gap:8px;}
-.lg-acc{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface-2);border-radius:9px;padding:9px 11px;text-align:left;transition:.15s;}
-.lg-acc:hover{border-color:#C7DCF0;background:var(--brand-soft);}
-.lg-acc .k{width:26px;height:26px;border-radius:7px;background:var(--surface);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--brand);font-weight:500;flex:none;}
-.lg-acc .n{display:block;font-size:12.5px;font-weight:500;}
-.lg-acc .d{display:block;font-size:10.5px;color:var(--ink-3);margin-top:1px;}
-.lg-acc .go{margin-left:auto;font-size:11px;color:var(--brand);opacity:.6;flex:none;}
-.lg-foot{margin-top:16px;font-size:10.5px;color:var(--ink-3);line-height:1.75;text-align:center;}
-
-/* ---------- 顶栏身份 ---------- */
-.scope-pill{display:flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:11.5px;
-  border:1px solid #CFE1F2;background:var(--brand-soft);color:var(--brand);white-space:nowrap;}
-.scope-pill span{color:#6D8FA9;font-size:11px;}
-.scope-pill b{font-weight:500;}
-.who{position:relative;display:flex;align-items:center;gap:7px;height:30px;padding:0 9px 0 4px;border:1px solid var(--line-2);
-  border-radius:999px;background:var(--surface-2);cursor:pointer;user-select:none;}
-.who:hover{border-color:#B9C5D3;}
-.who .av{width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;font-size:11px;
-  display:flex;align-items:center;justify-content:center;font-weight:500;flex:none;}
-.who .t{display:flex;flex-direction:column;line-height:1.2;}
-.who .t b{font-size:12px;font-weight:500;}
-.who .t i{font-style:normal;font-size:10px;color:var(--ink-3);}
-.who-menu{position:absolute;top:37px;right:0;min-width:222px;background:var(--surface);border:1px solid var(--line-2);
-  border-radius:10px;box-shadow:var(--shadow);padding:5px;display:none;z-index:60;}
-.who.open .who-menu{display:block;}
-.who-menu .hint{font-size:10.5px;color:var(--ink-3);padding:5px 9px 4px;letter-spacing:.4px;}
-.who-menu button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;
-  border-radius:7px;font-size:12.5px;text-align:left;}
-.who-menu button:hover{background:var(--surface-3);}
-.who-menu .sep{height:1px;background:var(--line);margin:4px 2px;}
-.iso-note{font-size:10.5px;color:var(--ink-3);padding:7px 9px 3px;border-top:1px solid var(--line);margin-top:4px;line-height:1.6;}
-
 /* ---------- 工单流转 ---------- */
 .pool .pd{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 4px;border-top:1px solid var(--line);}
 .pool .pd:first-child{border-top:0;}
@@ -549,7 +511,7 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
 .mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
 .mfoot .btn{padding:8px 18px;font-size:12.5px;border-radius:8px;}
 .role-tip{font-size:11px;color:var(--ink-3);margin-top:8px;line-height:1.7;}
-/* ---------- 工单：字段级权限 ---------- */
+/* ---------- 工单：按工序推进 ---------- */
 .order .oh .mine{font-size:10px;color:var(--brand);background:var(--brand-soft);border:1px solid #CDE0F1;border-radius:99px;padding:1px 7px;white-space:nowrap;}
 .order .of{flex-wrap:wrap;row-gap:2px;}
 .order .oh .badge{margin-left:auto;}
@@ -580,101 +542,11 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
   border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;
   box-shadow:0 -14px 18px -16px rgba(15,23,32,.35);}
 .wo-foot .btn{padding:8px 18px;font-size:12.5px;border-radius:8px;}
-/* ---------- 账号与角色（管理员） ---------- */
-.adm-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-.adm-head h3{margin:0;font-size:14px;}
-.adm-head .sub{display:block;font-size:11px;color:var(--ink-3);margin-top:4px;line-height:1.7;}
-.adm-head .btn{margin-left:auto;flex:none;}
-.adm-tb{width:100%;border-collapse:collapse;font-size:11.5px;}
-.adm-tb th{text-align:left;font-weight:500;color:var(--ink-3);font-size:10.5px;letter-spacing:.4px;padding:9px 10px;
-  border-bottom:1px solid var(--line-2);background:var(--surface-2);white-space:nowrap;}
-.adm-tb td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
-.adm-tb tr:last-child td{border-bottom:0;}
-.adm-tb .mono{font-family:var(--mono);}
-.adm-tb .sb{display:block;color:var(--ink-3);font-size:10.5px;margin-top:1px;}
-.adm-tb .op{display:flex;gap:6px;justify-content:flex-end;}
-.adm-tb .op button{font-size:10.5px;padding:3px 8px;border:1px solid var(--line-2);border-radius:6px;
-  background:var(--surface);color:var(--ink-2);white-space:nowrap;}
-.adm-tb .op button:hover{border-color:#B9C7D6;color:var(--ink);}
-.adm-tb .op button.warn{color:var(--red);border-color:#EDC4C1;background:var(--red-soft);}
-.adm-note{margin-top:10px;font-size:11px;color:var(--ink-3);line-height:1.8;background:var(--surface-2);
-  border:1px solid var(--line);border-radius:8px;padding:9px 12px;}
-.adm-note b{color:var(--ink-2);font-weight:500;}
-.adm-note code{font-family:var(--mono);font-size:10.5px;background:var(--surface-3);padding:1px 5px;border-radius:4px;}
-.body.admin-mode{grid-template-columns:54px minmax(0,1fr) 0;}
-.body.admin-mode #agent{display:none;}
-.f-chk{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}
-.f-chk label{display:flex;align-items:center;gap:6px;font-size:11.5px;border:1px solid var(--line-2);white-space:nowrap;
-  background:var(--surface-2);border-radius:7px;padding:5px 10px;cursor:pointer;color:var(--ink-2);}
-.f-chk input{accent-color:var(--brand);}
-/* ---------- 首次登录改密 ---------- */
-.chg{position:fixed;inset:0;z-index:120;background:rgba(15,23,32,.55);display:none;align-items:center;justify-content:center;padding:24px;}
-.chg.on{display:flex;}
-.chg-card{width:min(400px,100%);background:var(--surface);border-radius:14px;padding:26px 26px 22px;box-shadow:0 24px 60px -20px rgba(15,23,32,.5);}
-.chg-t{font-size:16px;font-weight:600;}
-.chg-p{font-size:11.5px;color:var(--ink-3);line-height:1.8;margin:8px 0 4px;}
-.chg-p b{color:var(--ink-2);font-weight:500;}
-.au-tb{width:100%;border-collapse:collapse;font-size:11.5px;}
-.au-tb th{text-align:left;font-weight:500;color:var(--ink-3);padding:5px 6px;border-bottom:1px solid var(--line-2);font-size:10.5px;letter-spacing:.4px;}
-.au-tb td{padding:6px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word;}
-.au-tb tr:last-child td{border-bottom:0;}
-.au-tb .mono{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap;}
-.au-tb .id{font-family:var(--mono);font-size:11px;}
-.au-tb .b{color:var(--red);font-weight:500;}
-.au-tb .ok{color:var(--green);}
 .tk{font-family:var(--mono);font-size:11px;background:var(--surface-3);border:1px solid var(--line);border-radius:7px;
   padding:9px 11px;word-break:break-all;line-height:1.7;color:var(--ink-2);}
-@media (max-width:1240px){.scope-pill{display:none;}}
-@media (max-width:960px){.login{grid-template-columns:1fr;}.lg-l{display:none;}}
 </style>
 </head>
 <body>
-
-<div class="login" id="login">
-  <div class="lg-l">
-    <div class="lg-brand">
-      <span class="m"><svg viewBox="0 0 24 24"><path d="M4 16l5-6 4 3 7-9"/></svg></span>
-      <b>载运运维</b><span>检测智能体</span>
-    </div>
-    <h1 class="lg-h1">工号即身份，<br>权限即边界。</h1>
-    <p class="lg-p">登录后按岗位下发界面与数据范围：值班员只见当班配属车组，检修工程师可查检修段全部车组。同一张表，不同的人只看到自己那几行。</p>
-    <div class="lg-steps">
-      <div class="lg-step"><span class="n">01</span><span class="b"><b>认证</b><i>工号与密码成对校验，任一缺失不予受理</i></span></div>
-      <div class="lg-step"><span class="n">02</span><span class="b"><b>授权</b><i>角色决定进入哪套界面、可用哪些动作</i></span></div>
-      <div class="lg-step"><span class="n">03</span><span class="b"><b>隔离</b><i>查询强制按车组范围过滤，越权返回空集</i></span></div>
-    </div>
-    <div class="lg-note">演示环境 · 数据为内置示例 · 不含真实人员信息</div>
-  </div>
-  <div class="lg-r">
-    <div class="lg-card">
-      <div class="lg-t">登录控制台</div>
-      <div class="lg-s">使用工号与密码验证身份，通过后按角色进入对应界面</div>
-      <label class="lg-f"><span>工号</span><input id="lgId" inputmode="numeric" maxlength="8" placeholder="8 位工号，如 10457" autocomplete="username"></label>
-      <label class="lg-f pw"><span>密码</span><input id="lgPw" type="password" placeholder="请输入密码" autocomplete="current-password"><button type="button" class="lg-eye" id="lgEye">显示</button></label>
-      <div class="lg-msg" id="lgMsg"></div>
-      <button class="lg-sub" id="lgSub">登 录</button>
-      <div class="lg-or">演示账号 · 点击直接填入并登录</div>
-      <div class="lg-accs">
-        <button class="lg-acc" data-acc="10457"><span class="k">值</span><span><span class="n">值班员 · 张工</span><span class="d">工号 10457 · 当班配属 1 个车组</span></span><span class="go">填入 →</span></button>
-        <button class="lg-acc" data-acc="20318"><span class="k">检</span><span><span class="n">检修工程师 · 李工</span><span class="d">工号 20318 · 检修段 2 个车组</span></span><span class="go">填入 →</span></button>
-        <button class="lg-acc" data-acc="31602"><span class="k">班</span><span><span class="n">检修班组 · 王工</span><span class="d">工号 31602 · 作业范围 1 个车组</span></span><span class="go">填入 →</span></button>
-        <button class="lg-acc" data-acc="90001"><span class="k">管</span><span><span class="n">系统管理员 · 陈工</span><span class="d">工号 90001 · 仅账号与审计</span></span><span class="go">填入 →</span></button>
-      </div>
-      <div class="lg-foot">连续 5 次失败锁定 15 分钟 · 登录、越权尝试与停机指令均记入审计日志</div>
-    </div>
-  </div>
-</div>
-
-<div class="chg" id="chg">
-  <div class="chg-card">
-    <div class="chg-t">首次登录 · 设置新密码</div>
-    <div class="chg-p">初始口令仅用于激活账号，设置后立即失效。<br><b id="chgWho">—</b></div>
-    <label class="lg-f"><span>新密码</span><input id="chgP1" type="password" placeholder="至少 8 位，建议字母 + 数字" autocomplete="new-password"></label>
-    <label class="lg-f"><span>确认新密码</span><input id="chgP2" type="password" placeholder="再次输入" autocomplete="new-password"></label>
-    <div class="lg-msg" id="chgMsg"></div>
-    <button class="lg-sub" id="chgOk">设置并进入</button>
-  </div>
-</div>
 
 <div class="app">
   <header class="topbar">
@@ -697,23 +569,8 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
     </div>
 
     <div class="topbar-right">
-      <div class="scope-pill" id="scopePill"><span>数据范围</span><b id="scopeText">未登录</b></div>
       <div class="pill"><i></i>本地推理 · 在线</div>
       <div class="pill warn" id="alertPill"><i></i><span id="alertCount">3 条待确认</span></div>
-      <div class="who" id="whoBtn" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
-        <span class="av" id="whoAv">—</span>
-        <span class="t"><b id="whoName">未登录</b><i id="whoRole">请先验证身份</i></span>
-        <span class="caret"></span>
-        <div class="who-menu" id="whoMenu">
-          <div class="hint">当前会话</div>
-          <button id="miToken">查看会话令牌</button>
-          <button id="miAudit">审计日志</button>
-          <button id="miProbe">越权访问测试</button>
-          <div class="sep"></div>
-          <button id="miSwitch">切换身份</button>
-          <button id="miOut">退出登录</button>
-        </div>
-      </div>
       <div class="clock" id="clock">09:16</div>
     </div>
   </header>
@@ -728,7 +585,6 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
       <button class="rail-btn" data-view="tasks" title="检测任务">任务</button>
       <button class="rail-btn" data-view="orders" title="检修工单">工单</button>
       <button class="rail-btn" data-view="know" title="知识库">知识</button>
-      <button class="rail-btn" data-view="admin" title="账号与角色">账号</button>
       <div class="rail-foot">
         <button class="rail-btn" data-view="settings" title="设置">设置</button>
       </div>
@@ -819,9 +675,9 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
       <section class="view" id="view-orders">
         <div class="card" id="poolCard" style="margin-bottom:10px">
           <div class="card-h">
-            <h3>待我处理 · 派单队列</h3>
+            <h3>待派单 · 需定班组与天窗</h3>
             <span class="sub" id="poolSub">0 条</span>
-            <div class="right"><span>仅值班调度可见 · 按告警等级排序</span></div>
+            <div class="right"><span>按告警等级排序</span></div>
           </div>
           <div class="pool" id="poolList"></div>
         </div>
@@ -949,27 +805,6 @@ canvas.speccv{width:100%;display:block;border-radius:8px;}
         <div class="field-voice-log">
           <h4>语音指令记录</h4>
           <div class="vlog" id="vlog"><div class="row" style="opacity:.55"><span class="ic">···</span><span class="txt"><b>暂无指令</b><span>唤醒后说出的指令会显示在这里</span></span></div></div>
-        </div>
-      </section>
-
-      <section class="view" id="view-admin">
-        <div class="adm-head">
-          <div>
-            <h3>账号与角色</h3>
-            <span class="sub">这里只录入「工号 · 角色 · 数据范围」，不录入密码。初始口令由系统生成、只显示一次，管理员不可查看任何人的密码。</span>
-          </div>
-          <button class="btn primary" id="admNew">+ 新建账号</button>
-        </div>
-        <div class="card" style="padding:0;overflow:hidden">
-          <table class="adm-tb">
-            <thead><tr><th>工号</th><th>姓名 / 部门</th><th>角色</th><th>数据范围</th><th>状态</th><th>最近登录</th><th style="text-align:right">操作</th></tr></thead>
-            <tbody id="admBody"></tbody>
-          </table>
-        </div>
-        <div class="adm-note">
-          <b>录入规则</b>　建号时系统生成 12 位随机初始口令，仅本次显示；通过企业微信或密封单转交本人，不走群聊与普通邮件。
-          <b>首次登录强制改密</b>，改密前除改密页外不可进入；初始口令 72 小时未激活即作废。
-          <b>停用</b>即时失效令牌，但保留账号与历史工单的签署人，不删号。所有建号、改角色、重置、停用动作写入审计日志。
         </div>
       </section>
 
@@ -1307,7 +1142,13 @@ function renderTasks(){
     ['T-1044', '5 车制动缸', '压力校验', '王工', '10:00 - 10:30', 'wait'],
     ['T-1045', '受电弓滑板', '磨耗测量', '李工', '10:10 - 10:40', 'wait'],
     ['T-1046', '轮对踏面', '影像巡检', '机器视觉', '10:30 - 11:20', 'run'],
-    ['T-1047', '车门密封条', '阻力测试', '赵工', '11:00 - 11:30', 'wait']
+    ['T-1047', '车门密封条', '阻力测试', '赵工', '11:00 - 11:30', 'wait'],
+    ['T-1048', '2 轴齿轮箱', '油液取样', '王工', '11:30 - 12:00', 'wait'],
+    ['T-1049', '车顶高压母线', '绝缘电阻', '张工', '13:00 - 13:30', 'wait'],
+    ['T-1050', '3 车空调机组', '制冷性能', '赵工', '13:30 - 14:10', 'wait'],
+    ['T-1051', '轴端接地装置', '碳刷磨耗', '李工', '14:10 - 14:40', 'wait'],
+    ['T-1052', '制动盘', '裂纹探伤', '机器视觉', '14:40 - 15:30', 'wait'],
+    ['T-1053', '悬挂空气弹簧', '气密性', '王工', '15:30 - 16:00', 'wait']
   ];
   const map = { done: ['已完成', 'ok'], run: ['执行中', 'info'], wait: ['待执行', 'gray'] };
   $('#taskBody').innerHTML = rows.map(function (r) {
@@ -1318,7 +1159,7 @@ function renderTasks(){
   $('#taskSub').textContent = t.tasks[1] + ' 项 · 已完成 ' + t.tasks[0];
 }
 
-/* ---------------- 工单：状态机 + 字段级权限 ---------------- */
+/* ---------------- 工单：状态机 ---------------- */
 const WO_STEPS = ['派单', '现场核实', '方案定稿', '处置', '验收'];
 const WO_IDX = { '待派发':0, '待核实':1, '待派工':2, '处置中':3, '待验收':4, '已完成':5 };
 const WO_BADGE = { '待派发':'bad', '待核实':'info', '待派工':'warn', '处置中':'info', '待验收':'warn', '已完成':'ok' };
@@ -1337,52 +1178,40 @@ const WO_FIELDS = [
   { k:'accDuty',g:'验收（双签）', own:'值班调度',   label:'交路确认', ph:'对交路与放行的影响' }
 ];
 
-function roleKey(){ return (window.SESSION && window.SESSION.key) || 'duty'; }
-function woScope(){ return window.SESSION ? window.SESSION.scope : Object.keys(TRAINS); }
-function woVisible(){ return state.orders.filter(function (o) { return woScope().indexOf(o.train) >= 0; }); }
+function woVisible(){ return state.orders; }
 
+/* 字段能否填，只看工单走到哪一步，不看是谁 */
 function woEditable(o, k){
   if (o.st === '已完成') return false;
-  const r = roleKey();
-  if (k === 'loc' || k === 'plan' || k === 'parts') return r === 'eng' && o.st === '待核实';
-  if (k === 'prio' || k === 'team' || k === 'win') return r === 'duty' && (o.st === '待派发' || o.st === '待派工');
-  if (k === 'exec' || k === 'chg') return r === 'crew' && o.st === '处置中';
-  if (k === 'accEng') return r === 'eng' && o.st === '待验收';
-  if (k === 'accDuty') return r === 'duty' && o.st === '待验收';
+  if (k === 'loc' || k === 'plan' || k === 'parts') return o.st === '待核实';
+  if (k === 'prio' || k === 'team' || k === 'win') return o.st === '待派发' || o.st === '待派工';
+  if (k === 'exec' || k === 'chg') return o.st === '处置中';
+  if (k === 'accEng' || k === 'accDuty') return o.st === '待验收';
   return false;
 }
 
 function woMine(o){
-  const r = roleKey();
-  if (r === 'duty' && (o.st === '待派发' || o.st === '待派工')) return o.st === '待派发' ? '待你派单' : '待你定天窗';
-  if (r === 'eng' && o.st === '待核实') return '待你现场核实';
-  if (r === 'crew' && o.st === '处置中') return '待你填写实做记录';
-  if (o.st === '待验收'){
-    if (r === 'eng' && !o.accEng) return '待你技术验收';
-    if (r === 'duty' && !o.accDuty) return '待你交路确认';
-  }
+  if (o.st === '待派发') return '待派单';
+  if (o.st === '待派工') return '待定天窗';
+  if (o.st === '待核实') return '待现场核实';
+  if (o.st === '处置中') return '待填实做记录';
+  if (o.st === '待验收') return '待签署归档';
   return '';
 }
 
 function woActions(o){
-  const r = roleKey();
-  if (o.st === '待派发' && r === 'duty') return [['派单下发', 'primary', 'dispatch']];
-  if (o.st === '待派工' && r === 'duty') return [['确认派工 · 下发班组', 'primary', 'dispatch']];
-  if (o.st === '待核实' && r === 'eng') return [['核实属实 · 提交方案', 'primary', 'submit']];
-  if (o.st === '处置中' && r === 'crew') return [['完成处置 · 提交验收', 'primary', 'finish']];
-  if (o.st === '待验收'){
-    if (r === 'eng' && !o.accEng) return [['技术验收通过', 'primary', 'accept']];
-    if (r === 'duty' && !o.accDuty) return [['交路确认', 'primary', 'accept']];
-  }
+  if (o.st === '待派发') return [['派单下发', 'primary', 'dispatch']];
+  if (o.st === '待派工') return [['确认派工 · 下发班组', 'primary', 'dispatch']];
+  if (o.st === '待核实') return [['核实属实 · 提交方案', 'primary', 'submit']];
+  if (o.st === '处置中') return [['完成处置 · 提交验收', 'primary', 'finish']];
+  if (o.st === '待验收') return [['验收通过 · 归档', 'primary', 'accept']];
   return [];
 }
 
 function renderPool(){
   const card = $('#poolCard'), list = $('#poolList');
   if (!card || !list) return;
-  const duty = roleKey() === 'duty';
-  card.style.display = duty ? '' : 'none';
-  if (!duty) return;
+  card.style.display = '';
   const items = woVisible().filter(function (o) { return o.st === '待派发' || o.st === '待派工'; });
   $('#poolSub').textContent = items.length + ' 条';
   list.innerHTML = items.length ? items.map(function (o) {
@@ -1400,17 +1229,13 @@ function renderOrders(){
   renderPool();
   const box = $('#orderList');
   if (!box) return;
-  const duty = roleKey() === 'duty';
   const vis = woVisible();
-  /* 值班的待派发 / 待派工 放在上方队列里处理，列表只留已下发的；工程师看全量但只读 */
-  const shown = duty ? vis.filter(function (o) { return o.st !== '待派发' && o.st !== '待派工'; })
-    : (roleKey() === 'crew' ? vis.filter(function (o) { return o.st !== '待派发'; }) : vis);
-  const hidden = state.orders.length - vis.length;
+  /* 待派发 / 待派工 放在上方队列里处理，列表只留已下发的 */
+  const shown = vis.filter(function (o) { return o.st !== '待派发' && o.st !== '待派工'; });
   const poolN = vis.filter(function (o) { return o.st === '待派发' || o.st === '待派工'; }).length;
   const running = vis.filter(function (o) { return o.st !== '已完成'; }).length;
   $('#orderSub').textContent = running + ' 张进行中 · 共 ' + vis.length + ' 张' +
-    (duty && poolN ? '（待派队列 ' + poolN + ' 张见上方）' : '') +
-    (hidden ? ' · 另有 ' + hidden + ' 张不在数据范围内' : '');
+    (poolN ? '（待派队列 ' + poolN + ' 张见上方）' : '');
   box.innerHTML = (shown.length ? shown.map(function (o) {
     const mine = woMine(o);
     return '<div class="order"><div class="oh"><span class="id">' + o.id + '</span>' +
@@ -1420,16 +1245,19 @@ function renderOrders(){
       '<div class="vfy"><b>依据</b> ' + o.basis + '</div>' +
       '<div class="of"><span>' + (o.team || '班组待定') + '</span><span style="margin-left:auto">' + (o.win || '天窗待定') + '</span></div>' +
       '<div class="oa"><button class="btn' + (mine ? ' primary' : '') + '" data-wo="' + o.id + '">打开工单</button></div></div>';
-  }).join('') : '<div style="padding:20px;text-align:center;color:var(--ink-3);font-size:12px">该范围内暂无工单</div>') +
-    (hidden ? '<div class="iso-note" style="grid-column:1/-1">另有 ' + hidden + ' 张工单不在你的数据范围内 · 行级隔离</div>' : '');
+  }).join('') : '<div style="padding:20px;text-align:center;color:var(--ink-3);font-size:12px">暂无工单</div>');
+}
+
+function openModal(t, h){
+  $('#modalTitle').textContent = t;
+  $('#modalBody').innerHTML = h;
+  $('#mask').classList.add('on');
 }
 
 function openOrder(id){
   const o = state.orders.filter(function (x) { return x.id === id; })[0];
   if (!o) return;
-  const S = window.SESSION, r = roleKey();
   const canKeys = WO_FIELDS.filter(function (f) { return woEditable(o, f.k); }).map(function (f) { return f.label; });
-  const who = S ? (S.role + ' ' + S.name + ' · ' + S.id) : '未登录';
 
   let h = '<div class="q">' + o.train + ' · ' + o.title +
     '<br><span style="color:var(--ink-3);font-size:11px">来源：' + o.from + '</span></div>';
@@ -1440,9 +1268,9 @@ function openOrder(id){
     return '<div class="wo-step ' + cls + '">' + s + '</div>';
   }).join('') + '</div>';
 
-  h += '<div class="wo-perm">当前身份 <b>' + who + '</b>：本单可写字段 <b>' +
-    (canKeys.length ? canKeys.join('、') : '无（整单只读）') + '</b>。' +
-    '<br><em>前端把不可写字段渲染成只读只是第一层；服务端按令牌里的 role 与字段归属再校验一次，越权写入返回 403 并记审计。</em></div>';
+  h += '<div class="wo-perm">当前阶段 <b>' + o.st + '</b>：本单可填 <b>' +
+    (canKeys.length ? canKeys.join('、') : '无（已归档，只读）') + '</b>。' +
+    '<br><em>按工序推进：先派单定班组与天窗，现场核实后补技术方案，班组做完填实做记录，最后验收归档。</em></div>';
 
   let lastG = '';
   WO_FIELDS.forEach(function (f) {
@@ -1459,7 +1287,7 @@ function openOrder(id){
       ctl = '<div class="ro' + (o[f.k] ? '' : ' empty') + '">' + (o[f.k] || '—（待填写）') + '</div>';
     }
     h += '<div class="wo-f"><div class="k">' + f.label + '<i>' +
-      (can ? '你可编辑' : '由' + f.own + '填写') + '</i></div><div>' + ctl + '</div></div>';
+      (can ? '当前可填' : '待上一工序') + '</i></div><div>' + ctl + '</div></div>';
   });
 
   h += '<h4>判定依据</h4><div class="tk">' + o.basis + '</div>';
@@ -1490,21 +1318,12 @@ function woAct(o, act){
 
   if (act === 'close') { $('#mask').classList.remove('on'); return; }
 
-  /* 第二层校验：前端动作也按角色拦一道，不依赖「按钮有没有渲染出来」 */
-  const allowed = woActions(o).map(function (a) { return a[2]; });
-  if (allowed.indexOf(act) < 0) {
-    audit('越权动作', o.id + ' · ' + o.train, '角色不允许 · 已拒绝');
-    toast('当前身份无权执行该动作 · 服务端同样会返回 403');
-    return;
-  }
-
   if (act === 'dispatch') {
     const prio = val('prio') || o.prio, team = val('team'), win = val('win');
     if (!team || !win) { toast('指派班组与天窗时间为必填项，缺一不可下发'); return; }
     const first = o.st === '待派发';
     o.prio = prio; o.team = team; o.win = win;
     o.st = first ? '待核实' : '处置中';
-    audit(first ? '派单下发' : '确认派工', o.id + ' · ' + o.train, o.team + ' · ' + o.win);
     close();
     toast(first ? '工单已下发 ' + o.team + '，现场核实后由工程师补技术方案'
                 : '已按方案重新定天窗，工单下发 ' + o.team);
@@ -1517,7 +1336,6 @@ function woAct(o, act){
     o.loc = loc; o.plan = plan; o.parts = parts;
     o.win = '';                       /* 方案定稿后工时可能变化，天窗交回值班重排 */
     o.st = '待派工';
-    audit('提交技术方案', o.id + ' · ' + o.train, '已流转回值班待派工队列');
     close();
     toast('方案已提交，工单回到值班派工队列（天窗需按新工时重排）');
     return;
@@ -1528,26 +1346,17 @@ function woAct(o, act){
     if (!exec) { toast('实做记录需填写后才能提交验收'); return; }
     o.exec = exec; o.chg = chg;
     o.st = '待验收';
-    audit('班组完工', o.id + ' · ' + o.train, '实做记录已填 · 提交验收');
     close();
     toast('已提交验收，等待工程师技术验收 + 值班交路确认');
     return;
   }
 
   if (act === 'accept') {
-    if (roleKey() === 'eng') o.accEng = val('accEng') || '技术验收通过';
-    else o.accDuty = val('accDuty') || '交路影响已确认，可放行';
-    if (o.accEng && o.accDuty) {
-      o.st = '已完成';
-      audit('验收归档', o.id + ' · ' + o.train, '技术验收 + 交路确认双签完成');
-      close();
-      toast('双签完成，工单已归档：' + o.accEng + ' / ' + o.accDuty);
-    } else {
-      audit('验收签署', o.id + ' · ' + o.train,
-        roleKey() === 'eng' ? '技术验收已签 · 待值班交路确认' : '交路确认已签 · 待工程师技术验收');
-      close();
-      toast('已签署，等待另一方会签——相邻两段不由同一人签');
-    }
+    o.accEng = val('accEng') || '技术验收通过';
+    o.accDuty = val('accDuty') || '交路影响已确认，可放行';
+    o.st = '已完成';
+    close();
+    toast('验收完成，工单已归档：' + o.accEng + ' / ' + o.accDuty);
   }
 }
 
@@ -1590,10 +1399,7 @@ function renderDocs(kw){
 }
 
 function renderTrainMenu(){
-  const S = window.SESSION;
-  const all = Object.keys(TRAINS);
-  const keys = all.filter(function (k) { return !S || S.scope.indexOf(k) >= 0; });
-  const hidden = all.length - keys.length;
+  const keys = Object.keys(TRAINS);
   $('#trainMenu').innerHTML = keys.map(function (k) {
     const t = TRAINS[k];
     const total = t.alerts[0] + t.alerts[1] + t.alerts[2];
@@ -1601,7 +1407,7 @@ function renderTrainMenu(){
     return '<button data-train="' + k + '" class="' + (k === state.train ? 'on' : '') + '">' +
       '<span>' + k + '</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink-3);font-size:11px">' +
       total + ' 告警<span class="dot ' + cls + '"></span></span></button>';
-  }).join('') + (hidden ? '<div class="iso-note">另有 ' + hidden + ' 个车组不在你的数据范围内 · 行级隔离</div>' : '');
+  }).join('');
   $$('#trainMenu button').forEach(function (b) {
     b.addEventListener('click', function () {
       setTrain(b.dataset.train);
@@ -1718,7 +1524,7 @@ async function runFlow(f){
     acts.className = 'acts';
     acts.innerHTML = f.acts.map(function (a, i) {
       let label = a[0];
-      if (label.indexOf('派单') >= 0) label = roleKey() === 'duty' ? '确认并派单' : '确认建议 · 转派单';
+      if (label.indexOf('派单') >= 0) label = '确认并派单';
       return '<button class="btn ' + (a[1] || '') + '" data-act="' + i + '">' + label + '</button>';
     }).join('');
     wrap.appendChild(acts);
@@ -1743,17 +1549,13 @@ async function runFlow(f){
 function confirmOrder(f, btn){
   if (btn.dataset.done) return;
   btn.dataset.done = '1';
-  btn.textContent = roleKey() === 'duty' ? '已转待派单' : '已提交值班';
+  btn.textContent = '已生成待派工单';
   btn.className = 'btn';
   btn.disabled = true;
   const o = makeOrder(f.orderTitle || '现场处理任务', '智能体建议 · 已人工确认',
-    '智能体诊断结论经人工确认，转值班派单', '高');
-  if (roleKey() === 'duty'){
-    toast('建议已确认，' + o.id + ' 已生成，请补班组与天窗');
-    openOrder(o.id);
-  } else {
-    toast('建议已确认，' + o.id + ' 已进入值班派单队列（工程师只提请，不派单）');
-  }
+    '智能体诊断结论经人工确认，待补班组与天窗', '高');
+  toast('建议已确认，' + o.id + ' 已生成，请补班组与天窗');
+  openOrder(o.id);
 }
 
 const SYSTXT = {
@@ -2059,21 +1861,8 @@ function init(){
 
 function greet(){
   msgs.innerHTML = '';
-  const t = T(), S = window.SESSION;
-  if (S && S.key === 'duty'){
-    botSay('<b>' + S.name + '</b>，已按值班身份进入。可见数据范围：<b>' + S.scope.join('、') + '</b>（当班配属），其余车组不在你的权限内。<br>' +
-      '当前有 ' + (t.alerts[0] + t.alerts[1] + t.alerts[2]) + ' 条待确认告警，最需关注「' + t.events[0].title + '」。<br>' +
-      '现场模式可长按停机；派单与工单起草需转交检修工程师（本角色无工单派发权）。');
-    return;
-  }
-  if (S && S.key === 'eng'){
-    botSay('<b>' + S.name + '</b>，已按检修工程师身份进入。可见数据范围：<b>' + S.scope.join('、') + '</b>（检修段），' +
-      'HXD3-2201 属徐州北机务段，不在你的范围内。<br>' +
-      t.code + ' 健康度 <b style="color:' + (t.health >= 90 ? GREEN : AMBER) + '">' + t.health + '</b>，有 ' + t.events.length + ' 条待处理事件。<br>' +
-      '可查阅视觉/声纹检测明细与 PHM 预测，起草工单后需值班确认；停机授权不在本角色。');
-    return;
-  }
-  botSay('早上好。' + t.code + ' 目前健康度 <b style="color:' + (t.health >= 90 ? GREEN : AMBER) + '">' + t.health + '</b>，' +
+  const t = T();
+  botSay('当前车组 ' + t.code + ' 目前健康度 <b style="color:' + (t.health >= 90 ? GREEN : AMBER) + '">' + t.health + '</b>，' +
     '有 ' + t.events.length + ' 条待处理事件，其中最需要关注的是「' + t.events[0].title + '」。<br>' +
     '点左侧事件我可以直接给诊断；也可以问我「今天先修哪个」「排本周巡检计划」。');
 }
@@ -2380,31 +2169,84 @@ init();
     if (!cv) return;
     const ctx = cv.getContext && cv.getContext('2d');
     if (!ctx) return;
-    const W = cv.width = Math.max(300, cv.clientWidth || 300), H = cv.height = 104;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = Math.max(240, Math.round(cv.clientWidth || 320));
+    const H = Math.max(120, Math.round(cv.clientHeight || 180));
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) {
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(H * dpr);
+    }
+    if (ctx.setTransform) ctx.setTransform(dpr, 0, 0, dpr, 0, 0); else ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, W, H);
+
     const rul = rulOf(c);
     const rate = c.rate * (mileage / 1100);
     const days = 14;
     const horizon = Math.min(rul + 4, 40);
-    const padL = 8, padR = 8, padT = 10, padB = 6;
+    const padL = 12, padR = 46, padT = 18, padB = 26;
     const iw = W - padL - padR, ih = H - padT - padB;
+
     let vmin = c.thr, vmax = c.thr;
     for (let i = -days; i <= horizon; i++) {
       const v = c.dir === 'down' ? c.cur - rate * i : c.cur + rate * i;
       vmin = Math.min(vmin, v); vmax = Math.max(vmax, v);
     }
-    const m = (vmax - vmin) * 0.14 || 1; vmin -= m; vmax += m;
+    const m = (vmax - vmin) * 0.12 || 1; vmin -= m; vmax += m;
+
     const X = function (i) { return padL + (i + days) / (days + horizon) * iw; };
     const Y = function (v) { return padT + (1 - (v - vmin) / (vmax - vmin)) * ih; };
+    const fmt = function (v) { return c.fx === 0 ? Math.round(v) : v.toFixed(c.fx); };
+
+    /* 预测区浅底 */
+    ctx.fillStyle = 'rgba(18,85,143,.04)';
+    ctx.fillRect(X(0), padT, W - padR - X(0), ih);
+
+    /* 横向网格 + 右侧刻度 */
+    ctx.strokeStyle = '#EDF1F6'; ctx.lineWidth = 1;
+    ctx.font = '10.5px ui-monospace, Menlo, monospace';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    const ticks = ih > 260 ? 4 : 2;
+    for (let k = 0; k <= ticks; k++) {
+      const v = vmax - (vmax - vmin) * k / ticks;
+      const y = Y(v);
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+      ctx.fillStyle = '#A6B0BC';
+      ctx.fillText(fmt(v), W - padR + 8, y);
+    }
+    ctx.textBaseline = 'alphabetic';
+
+    /* 历史区间面积 */
+    const grad = ctx.createLinearGradient(0, padT, 0, H - padB);
+    grad.addColorStop(0, 'rgba(44,124,194,.18)');
+    grad.addColorStop(1, 'rgba(44,124,194,.02)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(X(-days), H - padB);
+    for (let i = -days; i <= 0; i++) {
+      const v = c.dir === 'down' ? c.cur - rate * i : c.cur + rate * i;
+      ctx.lineTo(X(i), Y(v));
+    }
+    ctx.lineTo(X(0), H - padB);
+    ctx.closePath(); ctx.fill();
+
+    /* 限值线 */
     ctx.strokeStyle = '#C33C37'; ctx.setLineDash([4, 3]); ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(padL, Y(c.thr)); ctx.lineTo(W - padR, Y(c.thr)); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = '#C33C37'; ctx.font = '9px ui-monospace, Menlo, monospace'; ctx.textAlign = 'left';
-    ctx.fillText('限值 ' + c.thr, padL + 2, Y(c.thr) - 3);
+    ctx.fillStyle = '#C33C37'; ctx.font = '11px ui-monospace, Menlo, monospace'; ctx.textAlign = 'left';
+    ctx.fillText('限值 ' + c.thr, padL + 2, Y(c.thr) - 6);
+
+    /* 今天分隔线 */
     ctx.strokeStyle = '#C9D3DE';
     ctx.beginPath(); ctx.moveTo(X(0), padT); ctx.lineTo(X(0), H - padB); ctx.stroke();
     ctx.fillStyle = '#8B96A3'; ctx.textAlign = 'center';
-    ctx.fillText('今天', X(0), H - 1);
-    ctx.strokeStyle = c.color; ctx.lineWidth = 1.7;
+    ctx.fillText('今天', X(0), H - 8);
+    if (X(0) - padL > 100) { ctx.textAlign = 'left'; ctx.fillText('14 天前', padL, H - 8); }
+    ctx.textAlign = 'right';
+    ctx.fillText('预测 +' + Math.round(horizon) + ' 天', W - padR, H - 8);
+
+    /* 历史实线 */
+    ctx.strokeStyle = c.color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
     ctx.beginPath();
     let started = false;
     for (let i = -days; i <= 0; i++) {
@@ -2412,6 +2254,8 @@ init();
       if (!started) { ctx.moveTo(X(i), Y(v)); started = true; } else ctx.lineTo(X(i), Y(v));
     }
     ctx.stroke();
+
+    /* 预测虚线 */
     ctx.setLineDash([5, 4]);
     ctx.beginPath();
     started = false;
@@ -2421,12 +2265,16 @@ init();
     }
     ctx.stroke();
     ctx.setLineDash([]);
+
+    /* 今天落点 + 预警点 + 到限值点 */
+    ctx.fillStyle = c.color;
+    ctx.beginPath(); ctx.arc(X(0), Y(c.cur), 4, 0, 7); ctx.fill();
     if (rul + 4 <= 40) {
       const wv = c.dir === 'down' ? c.thr + rate * 3 : c.thr - rate * 3;
       ctx.fillStyle = '#E0A11B';
-      ctx.beginPath(); ctx.arc(X(rul - 3), Y(wv), 3.5, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(X(rul - 3), Y(wv), 4.5, 0, 7); ctx.fill();
       ctx.fillStyle = '#C33C37';
-      ctx.beginPath(); ctx.arc(X(rul), Y(c.thr), 3.5, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(X(rul), Y(c.thr), 4.5, 0, 7); ctx.fill();
     }
   }
 
@@ -2830,7 +2678,7 @@ init();
     openCustom('⚠️ 紧急停机确认', 
       '<div class="q">即将对 <b>' + name + '</b> 下发紧急停机指令</div>' +
       '<h4>影响范围</h4>当前交路中断 · 库内断电 · 已生成事件记录并通知调度台<br>' +
-      '<h4>触发来源</h4>' + (src === 'voice' ? '语音指令（已通过声纹比对：值班员 张工）' : '现场模式长按确认（工号 ' + ((window.SESSION && window.SESSION.id) || '—') + '）') +
+      '<h4>触发来源</h4>' + (src === 'voice' ? '语音指令（已通过声纹比对）' : '现场模式长按确认') +
       '<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:18px">' +
       '<button id="esCancel" style="border:1px solid var(--line);background:var(--surface-2);border-radius:9px;padding:10px 22px;font-size:14px;cursor:pointer;font-family:inherit">取消</button>' +
       '<button id="esOk" style="border:none;background:#C33C37;color:#fff;border-radius:9px;padding:10px 22px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:600">确认停机</button></div>');
@@ -2847,12 +2695,11 @@ init();
     const banner = $('#fieldBanner');
     banner.classList.add('on');
     banner.innerHTML = '⛔ <b>' + name + '</b> 已执行紧急停机 · ' + new Date().toTimeString().slice(0, 5) +
-      ' · 指令来源已留痕（工号 ' + ((window.SESSION && window.SESSION.id) || '—') + '） · 等待调度复位';
+      ' · 指令来源已留痕 · 等待调度复位';
     STOP.classList.add('disabled');
     STOP.querySelector('.t').textContent = '已停机';
     TIP.textContent = '等待调度复位';
     toast('停机指令已下发至 TCMS，事件已上报调度台');
-    if (window.audit) audit('紧急停机', name, '已下发 · 等待调度复位');
     beep(520, 0.25);
     botSay('<b style="color:var(--red)">紧急停机已执行</b>（' + name + '）。<br>' +
       '· 指令链路：现场模式 → TCMS → 调度台，全程留痕<br>' +
@@ -2922,492 +2769,6 @@ init();
     if (e.key === 'Escape' && OV.classList.contains('on')) closeVoice();
   });
 })();
-</script>
-<script>
-/* ================= 身份认证 · 角色授权 · 行级隔离 ================= */
-const ACCOUNTS = {
-  '10457': { pw:'888888', name:'张工', role:'值班员', key:'duty', dept:'京沪场 · 调度值班室',
-    scope:['CRH-380B / 03'], scopeLabel:'当班配属 · 1 个车组',
-    views:['dash','field','tasks','orders'], can:['stop','dispatch'],
-    status:'启用', last:'11-07 08:12', pwdAt:'09-02', mustChange:false },
-  '20318': { pw:'888888', name:'李工', role:'检修工程师', key:'eng', dept:'动车所 · 走行部检修组',
-    scope:['CRH-380B / 03','CRH-380B / 07'], scopeLabel:'检修段 · 2 个车组',
-    views:['dash','vision','acoustic','phm','orders','know'], can:['draft','report'],
-    status:'启用', last:'11-07 08:05', pwdAt:'10-18', mustChange:false },
-  '31602': { pw:'888888', name:'王工', role:'检修班组', key:'crew', dept:'动车所 · 走行部检修组 · 一班',
-    scope:['CRH-380B / 03'], scopeLabel:'作业范围 · 1 个车组',
-    views:['orders','field','tasks'], can:['exec'],
-    status:'启用', last:'11-07 07:58', pwdAt:'10-11', mustChange:false },
-  '90001': { pw:'888888', name:'陈工', role:'系统管理员', key:'admin', dept:'信息中心 · 系统管理',
-    scope:['CRH-380B / 03','CRH-380B / 07','HXD3-2201'], scopeLabel:'账号与审计 · 不含业务数据',
-    views:['admin'], can:['user.admin'],
-    status:'启用', last:'11-06 18:20', pwdAt:'08-15', mustChange:false }
-};
-window.SESSION = null;
-
-let AUDIT = [
-  { t:'08:05', id:'20318', act:'登录成功', obj:'工号 20318', res:'令牌已签发' },
-  { t:'08:12', id:'10457', act:'登录成功', obj:'工号 10457', res:'令牌已签发' },
-  { t:'08:26', id:'10457', act:'越权请求', obj:'GET /trains/HXD3-2201/telemetry', res:'已拦截 · 返回空集' },
-  { t:'08:31', id:'10457', act:'派单下发', obj:'WO-4818 · 3 车牵引电机冷却风道', res:'电气组 · 今日 22:00 库内 3 道' },
-  { t:'08:33', id:'20318', act:'提交技术方案', obj:'WO-4821 · 03 车 2 轴轴箱', res:'已流转回值班派工队列' },
-  { t:'08:47', id:'10457', act:'紧急停机', obj:'CRH-380B / 03', res:'已下发 · 等待调度复位' }
-];
-let failCount = 0, lockedUntil = 0;
-
-function nowHM(){
-  const d = new Date();
-  return [d.getHours(), d.getMinutes()].map(function(n){ return String(n).padStart(2,'0'); }).join(':');
-}
-
-function audit(act, obj, res){
-  AUDIT.unshift({ t: nowHM(), id: window.SESSION ? window.SESSION.id : '—', act: act, obj: obj, res: res });
-  if (AUDIT.length > 60) AUDIT.pop();
-}
-
-function b64u(o){
-  return btoa(unescape(encodeURIComponent(JSON.stringify(o))))
-    .replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
-}
-
-function signToken(s){
-  return b64u({ alg:'HS256', typ:'JWT' }) + '.' +
-    b64u({ sub:s.id, name:s.name, role:s.role, scope:s.scope,
-           iat:Math.floor(s.iat/1000), exp:Math.floor(s.exp/1000) }) +
-    '.demo_signature_not_verified';
-}
-
-function openModal(t, h){
-  $('#whoBtn').classList.remove('open');
-  $('#modalTitle').textContent = t;
-  $('#modalBody').innerHTML = h;
-  $('#mask').classList.add('on');
-}
-
-function setMsg(h, cls){
-  const el = $('#lgMsg');
-  el.className = 'lg-msg' + (cls ? ' ' + cls : '');
-  el.innerHTML = h || '';
-}
-
-function showLogin(hint){
-  $('#whoBtn').classList.remove('open');
-  $('#whoBtn').setAttribute('aria-expanded', 'false');
-  $('#login').classList.remove('hide');
-  const pw = $('#lgPw');
-  pw.value = ''; pw.type = 'password';
-  $('#lgEye').textContent = '显示';
-  setMsg(hint || '', 'hint');
-  setTimeout(function(){ $('#lgId').focus(); }, 80);
-}
-
-function tryLogin(){
-  const id = String($('#lgId').value || '').trim();
-  const pw = String($('#lgPw').value || '');
-
-  if (!id || !pw){ setMsg('工号与密码需成对填写，缺一不可', 'bad'); return; }
-
-  if (Date.now() < lockedUntil){
-    setMsg('该工号已锁定，请约 ' + Math.ceil((lockedUntil - Date.now()) / 60000) + ' 分钟后再试', 'bad');
-    return;
-  }
-
-  const acc = ACCOUNTS[id];
-  if (!acc || acc.pw !== pw){
-    failCount++;
-    audit('登录失败', '工号 ' + (id || '（空）'), '凭证未通过（第 ' + failCount + ' 次）');
-    if (failCount >= 5){
-      lockedUntil = Date.now() + 15 * 60000;
-      failCount = 0;
-      audit('账户锁定', '工号 ' + id, '连续 5 次失败，锁定 15 分钟');
-      setMsg('连续 5 次失败，该工号已锁定 15 分钟<button id="lgUnlock">解除锁定（演示）</button>', 'bad');
-      $('#lgUnlock').addEventListener('click', function(){
-        lockedUntil = 0;
-        setMsg('已解除锁定（仅演示环境提供）', 'ok');
-      });
-      return;
-    }
-    setMsg('工号或密码不正确 · 还可尝试 ' + (5 - failCount) + ' 次<br>（工号不存在与密码错误返回同一条提示）', 'bad');
-    return;
-  }
-
-  if (acc.status === '停用'){
-    audit('登录失败', '工号 ' + id, '账号已停用');
-    setMsg('该工号已停用，请联系系统管理员', 'bad');
-    return;
-  }
-
-  failCount = 0;
-  enterApp(id, acc);
-}
-
-function enterApp(id, acc){
-  const s = {
-    id: id, name: acc.name, role: acc.role, key: acc.key, dept: acc.dept,
-    scope: acc.scope.slice(), scopeLabel: acc.scopeLabel,
-    views: acc.views.slice(), can: acc.can.slice(),
-    iat: Date.now(), exp: Date.now() + 8 * 3600 * 1000
-  };
-  s.token = signToken(s);
-  window.SESSION = s;
-  try { sessionStorage.setItem('cy.session', JSON.stringify(s)); } catch (e) {}
-  $('#login').classList.add('hide');
-  $('#lgPw').value = '';
-  applyRole();
-  audit('登录成功', '工号 ' + id, '令牌已签发 · 8 小时');
-  if (acc.mustChange){
-    showChg();
-  } else {
-    toast('已登录 · ' + acc.name + '（' + acc.role + '）· 右上角头像可切换身份');
-  }
-}
-
-/* ---------- 首次登录强制改密 ---------- */
-function showChg(){
-  const s = window.SESSION;
-  if (!s) return;
-  $('#chgWho').textContent = '工号 ' + s.id + ' · ' + s.name + '（' + s.role + '）';
-  $('#chgP1').value = ''; $('#chgP2').value = '';
-  const m = $('#chgMsg'); m.className = 'lg-msg'; m.textContent = '';
-  $('#chg').classList.add('on');
-  setTimeout(function () { $('#chgP1').focus(); }, 80);
-}
-
-function doChangePwd(){
-  const s = window.SESSION;
-  if (!s) return;
-  const p1 = String($('#chgP1').value || ''), p2 = String($('#chgP2').value || '');
-  const m = $('#chgMsg');
-  const bad = function (t) { m.className = 'lg-msg bad'; m.textContent = t; };
-  m.className = 'lg-msg';
-  if (p1.length < 8) return bad('新密码至少 8 位');
-  if (!/[A-Za-z]/.test(p1) || !/\d/.test(p1)) return bad('需同时包含字母与数字');
-  if (p1 === ACCOUNTS[s.id].pw) return bad('新密码不能与初始口令相同');
-  if (p1 !== p2) return bad('两次输入不一致');
-  ACCOUNTS[s.id].pw = p1;
-  ACCOUNTS[s.id].mustChange = false;
-  ACCOUNTS[s.id].status = '启用';
-  ACCOUNTS[s.id].pwdAt = '11-07';
-  $('#chg').classList.remove('on');
-  audit('首次改密', '工号 ' + s.id, '初始口令已作废');
-  toast('密码已更新 · 初始口令作废，令牌已重新签发');
-}
-
-/* ---------- 账号与角色（管理员） ---------- */
-const ROLE_PRESET = {
-  duty:  { role:'值班员',     views:['dash','field','tasks','orders'], can:['stop','dispatch'] },
-  eng:   { role:'检修工程师', views:['dash','vision','acoustic','phm','orders','know'], can:['draft','report'] },
-  crew:  { role:'检修班组',   views:['orders','field','tasks'], can:['exec'] },
-  admin: { role:'系统管理员', views:['admin'], can:['user.admin'] }
-};
-
-function randPwd(){
-  const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ', a = 'abcdefghijkmnpqrstuvwxyz', d = '23456789';
-  const pick = function (t) { return t[Math.floor(Math.random() * t.length)]; };
-  let s = '';
-  for (let i = 0; i < 4; i++) s += pick(A);
-  for (let i = 0; i < 4; i++) s += pick(a);
-  for (let i = 0; i < 4; i++) s += pick(d);
-  return s;
-}
-
-function renderAdmin(){
-  const body = $('#admBody');
-  if (!body) return;
-  const ids = Object.keys(ACCOUNTS);
-  body.innerHTML = ids.map(function (id) {
-    const a = ACCOUNTS[id];
-    const cls = a.status === '启用' ? 'ok' : a.status === '停用' ? 'bad' : 'warn';
-    const scopeTxt = a.key === 'admin' ? '—' : a.scope.join('、');
-    const scopeSub = a.key === 'admin' ? '不涉及业务数据' : a.scope.length + ' 个车组';
-    return '<tr><td class="mono">' + id + '</td>' +
-      '<td>' + a.name + '<span class="sb">' + a.dept + '</span></td>' +
-      '<td>' + a.role + '</td>' +
-      '<td>' + scopeTxt + '<span class="sb">' + scopeSub + '</span></td>' +
-      '<td><span class="badge ' + cls + '">' + a.status + '</span></td>' +
-      '<td class="mono">' + (a.last || '—') + '</td>' +
-      '<td><div class="op">' +
-      '<button data-adm-reset="' + id + '">重置密码</button>' +
-      '<button class="' + (a.status === '停用' ? '' : 'warn') + '" data-adm-toggle="' + id + '">' +
-      (a.status === '停用' ? '启用' : '停用') + '</button>' +
-      '</div></td></tr>';
-  }).join('');
-}
-
-function openNewUser(){
-  const trains = Object.keys(TRAINS);
-  const roles = [['duty','值班员'],['eng','检修工程师'],['crew','检修班组'],['admin','系统管理员']];
-  openModal('新建账号 · 录入账号、角色与数据范围',
-    '<div class="q">管理员只录入账号与权限，<b>不设置密码</b>。提交后系统生成一次性初始口令，本窗口关闭即不可再查看。</div>' +
-    '<h4>账号信息</h4>' +
-    '<div class="wo-f"><div class="k">工号<i>唯一，不可修改</i></div><div><input id="nuId" inputmode="numeric" maxlength="8" placeholder="如 31777"></div></div>' +
-    '<div class="wo-f"><div class="k">姓名</div><div><input id="nuName" placeholder="如 赵工"></div></div>' +
-    '<div class="wo-f"><div class="k">部门 / 班组</div><div><input id="nuDept" placeholder="如 动车所 · 走行部检修组 · 二班"></div></div>' +
-    '<h4>角色与数据范围</h4>' +
-    '<div class="wo-f"><div class="k">角色<i>决定可进入的界面</i></div><div><select id="nuRole">' +
-      roles.map(function (r) { return '<option value="' + r[0] + '">' + r[1] + '</option>'; }).join('') +
-    '</select></div></div>' +
-    '<div class="wo-f"><div class="k">数据范围<i>行级隔离的依据</i></div><div><div class="f-chk" id="nuScope">' +
-      trains.map(function (t) {
-        return '<label><input type="checkbox" class="nuScope" value="' + t + '"' + (t.indexOf('03') >= 0 ? ' checked' : '') + '>' + t + '</label>';
-      }).join('') + '</div></div></div>' +
-    '<h4>权限预览（按角色自动带出）</h4><div class="tk" id="nuPreview" style="white-space:pre-wrap">—</div>' +
-    '<div class="wo-foot"><button class="btn" data-act="cancel">取消</button>' +
-    '<button class="btn primary" id="nuOk">建号并生成初始口令</button></div>');
-
-  const fill = function () {
-    const p = ROLE_PRESET[$('#nuRole').value];
-    const VL = { dash:'监测', vision:'视觉', acoustic:'声纹', phm:'预测', field:'现场', tasks:'任务', orders:'工单', know:'知识', admin:'账号' };
-    const CL = { stop:'紧急停机', dispatch:'派单', draft:'起草方案', report:'生成报告', exec:'填写作业记录', 'user.admin':'账号管理' };
-    $('#nuPreview').textContent = '角色：' + p.role + '\n可进入界面：' + p.views.map(function (v) { return VL[v] || v; }).join(' / ') +
-      '\n可执行动作：' + (p.can.map(function (c) { return CL[c] || c; }).join(' / ') || '—') +
-      '\n字段级权限：' + (p.role === '检修工程师' ? '技术方案、技术验收' :
-        p.role === '值班员' ? '优先级、班组、天窗、交路确认' :
-        p.role === '检修班组' ? '实做记录、更换件号与工时' : '账号与角色配置');
-  };
-  $('#nuRole').addEventListener('change', fill);
-  fill();
-
-  $$('#modalBody [data-act="cancel"]').forEach(function (b) {
-    b.addEventListener('click', function () { $('#mask').classList.remove('on'); });
-  });
-  $('#nuOk').addEventListener('click', createUser);
-}
-
-function createUser(){
-  const id = String($('#nuId').value || '').trim();
-  const name = String($('#nuName').value || '').trim();
-  const dept = String($('#nuDept').value || '').trim() || '未填写';
-  const key = $('#nuRole').value;
-  const scopes = $$('.nuScope').filter(function (c) { return c.checked; }).map(function (c) { return c.value; });
-
-  if (!/^\d{5,8}$/.test(id)) { toast('工号需为 5–8 位数字'); return; }
-  if (ACCOUNTS[id]) { toast('该工号已存在，请先停用旧账号再建新号'); return; }
-  if (!name) { toast('请填写姓名'); return; }
-  if (!scopes.length && key !== 'admin') { toast('请至少勾选一个数据范围，否则行级隔离没有依据'); return; }
-
-  const p = ROLE_PRESET[key];
-  const pw = randPwd();
-  ACCOUNTS[id] = {
-    pw: pw, name: name, role: p.role, key: key, dept: dept,
-    scope: scopes.slice(), scopeLabel: key === 'admin' ? '账号与审计 · 不含业务数据' : scopes.length + ' 个车组',
-    views: p.views.slice(), can: p.can.slice(),
-    status: '待激活', last: '—', pwdAt: '—', mustChange: true
-  };
-  renderAdmin();
-  audit('新建账号', '工号 ' + id, p.role + ' · ' + (scopes.join('、') || '不含业务数据'));
-  showCredential(id, pw, '账号已创建');
-}
-
-function showCredential(id, pw, title){
-  const a = ACCOUNTS[id];
-  openModal(title + ' · 初始口令只显示一次',
-    '<div class="q">工号 <b>' + id + '</b> · ' + a.name + '（' + a.role + '）· ' + (a.scope.join('、') || '不含业务数据') + '</div>' +
-    '<h4>初始口令</h4>' +
-    '<div class="tk" style="font-size:18px;letter-spacing:4px;text-align:center;padding:16px;color:var(--ink)">' + pw + '</div>' +
-    '<h4>交付方式</h4>通过企业微信或密封单转交本人；不走群聊、不走普通邮件。关闭本窗口后不可再次查看，只能重置。' +
-    '<h4>生效规则</h4>72 小时内未激活即作废；首次登录强制改密，改密前除改密页外不可进入。' +
-    '<h4>库里存的是什么</h4>服务端只保存加盐哈希（bcrypt / Argon2），本页面显示的明文不会落库，也不进日志——管理员永远看不到任何人的密码。' +
-    '<div class="wo-foot"><button class="btn primary" id="credOk">我已记录并转交</button></div>');
-  $('#credOk').addEventListener('click', function () { $('#mask').classList.remove('on'); });
-}
-
-function resetPwd(id){
-  const a = ACCOUNTS[id];
-  const pw = randPwd();
-  a.pw = pw; a.mustChange = true; a.status = '待激活'; a.pwdAt = '—';
-  renderAdmin();
-  audit('重置口令', '工号 ' + id, '一次性初始口令已生成 · 旧口令失效');
-  showCredential(id, pw, '已重置 ' + a.name + ' 的口令');
-}
-
-function toggleUser(id){
-  const a = ACCOUNTS[id];
-  a.status = a.status === '停用' ? '启用' : '停用';
-  renderAdmin();
-  audit(a.status === '停用' ? '停用账号' : '启用账号', '工号 ' + id,
-    a.status === '停用' ? '令牌即时失效 · 历史工单保留签署人' : '可重新登录');
-  toast(a.status === '停用' ? ('已停用 ' + a.name + '，令牌立即失效') : ('已启用 ' + a.name));
-}
-
-function applyRole(){
-  const s = window.SESSION;
-  if (!s) return;
-  $('#whoAv').textContent = s.name.slice(0, 1);
-  $('#whoName').textContent = s.name;
-  $('#whoRole').textContent = s.role + ' · ' + s.id;
-  $('#scopeText').textContent = s.scopeLabel;
-  $('#whoBtn').title = s.dept;
-
-  $$('.rail-btn').forEach(function (b) {
-    b.style.display = (s.views.indexOf(b.dataset.view) >= 0) ? '' : 'none';
-  });
-  $$('.chip[data-flow]').forEach(function (b) {
-    if (b.dataset.flow === 'compare') b.style.display = (s.key === 'eng') ? '' : 'none';
-  });
-
-  const st = $('#agent .st');
-  if (st) {
-    const tip = { duty:'已接入 4 个工具 · 含派单与停机', eng:'已接入 6 个工具 · 含方案起草，无派单权',
-                  crew:'已接入 2 个工具 · 仅作业记录', admin:'不接入业务工具 · 仅账号与审计' };
-    st.innerHTML = '<i></i>' + (tip[s.key] || '');
-  }
-
-  const isAdmin = s.key === 'admin';
-  const body = $('.body');
-  if (body) body.classList.toggle('admin-mode', isAdmin);
-  const comp = $('.composer');
-  if (comp) comp.style.display = isAdmin ? 'none' : '';
-  if ($('#trainSel')) $('#trainSel').style.display = isAdmin ? 'none' : '';
-  if ($('#rangeSeg')) $('#rangeSeg').style.display = isAdmin ? 'none' : '';
-  if ($('#micFab')) $('#micFab').style.display = isAdmin ? 'none' : '';
-  if ($('#alertPill')) $('#alertPill').style.display = isAdmin ? 'none' : '';
-
-  if (s.views.indexOf(state.view) < 0) switchView(s.views[0]);
-  renderTrainMenu();
-  if (isAdmin){ renderAdmin(); return; }
-  setTrain(s.scope[0]);
-  greet();
-}
-
-function openToken(){
-  const s = window.SESSION;
-  if (!s) return;
-  const p = { sub:s.id, name:s.name, role:s.role, scope:s.scope,
-              iat:Math.floor(s.iat/1000), exp:Math.floor(s.exp/1000) };
-  openModal('会话令牌（演示）',
-    '<div class="q">登录成功后签发，前端所有请求都要携带；令牌内已写死角色与可见车组范围，服务端据此过滤数据行。</div>' +
-    '<h4>Payload</h4><pre class="tk" style="margin:0;white-space:pre-wrap">' + JSON.stringify(p, null, 2) + '</pre>' +
-    '<h4>有效期</h4>至 ' + new Date(s.exp).toLocaleString('zh-CN') + '（8 小时），登出、超时、改密即失效。' +
-    '<h4>演示说明</h4>第三段为占位签名，未做真实校验。生产环境需 HS256 签名、刷新机制，并放入 HttpOnly Cookie，避免脚本读取。');
-}
-
-function openAudit(){
-  const s = window.SESSION;
-  if (!s) return;
-  const isAdmin = s.key === 'admin';
-  const list = (isAdmin ? AUDIT : AUDIT.filter(function (a) { return a.id === s.id; })).slice(0, 14);
-  const rows = list.length ? list.map(function (a) {
-    const cls = /拦截|未通过|锁定|停用/.test(a.res) ? 'b' : (/成功|签发|下发|待值班|启用/.test(a.res) ? 'ok' : '');
-    return '<tr><td class="mono">' + a.t + '</td><td class="id">' + a.id + '</td><td>' + a.act +
-      '</td><td>' + a.obj + '</td><td class="' + cls + '">' + a.res + '</td></tr>';
-  }).join('') : '<tr><td colspan="5" style="color:var(--ink-3)">暂无记录</td></tr>';
-  openModal('审计日志 · 最近 ' + list.length + ' 条',
-    '<div class="q">' + (isAdmin
-      ? '管理员可见全量日志（只读，不可改不可删）——账号动作与业务动作写在同一条时间线上。'
-      : '仅显示与当前工号 <b>' + s.id + '</b> 相关的记录 —— 审计日志本身也做行级隔离。') + '</div>' +
-    '<table class="au-tb"><thead><tr><th>时间</th><th>工号</th><th>动作</th><th>对象</th><th>结果</th></tr></thead><tbody>' +
-    rows + '</tbody></table>' +
-    '<h4>记录规则</h4>登录成功 / 失败、账户锁定、越权尝试、紧急停机、派单下发、技术方案提交、验收会签均写入同一份日志，与现场模式的语音与长按留痕合并保存。' +
-    '<h4>字段级留痕</h4>工单的每一次写入都记录「谁、改了哪一格、改成什么、依据哪条令牌」，便于回溯是调度改了天窗，还是工程师改了方案。');
-}
-
-function openProbe(){
-  const s = window.SESSION;
-  if (!s) return;
-  const all = Object.keys(TRAINS);
-  const hidden = all.filter(function (k) { return s.scope.indexOf(k) < 0; });
-  const target = hidden[0] || all[all.length - 1];
-  const cond = s.scope.map(function (k) { return "'" + k + "'"; }).join(', ');
-  const rec = { t: nowHM(), id: s.id, act:'越权请求', obj:'GET /trains/' + target + '/telemetry', res:'已拦截 · 返回空集' };
-  AUDIT.unshift(rec);
-  openModal('越权访问测试 · 行级隔离',
-    '<div class="q">当前身份：<b>' + s.name + '（' + s.role + ' · ' + s.id + '）</b> · 令牌声明 scope = [' + cond + ']</div>' +
-    '<h4>发起请求</h4><div class="tk">GET /api/v1/trains/' + target + '/telemetry</div>' +
-    '<h4>服务端注入的范围条件</h4><div class="tk">WHERE train_code IN (' + cond + ')</div>' +
-    '<h4>返回结果</h4><div class="tk">HTTP 200 · { "data": [], "rows": 0 }</div>' +
-    '<h4>为什么不是 403</h4>越权请求返回空集而非「无权限」提示，避免被用来反推某个车组是否存在：不存在的车组与越权车组返回完全相同的响应。' +
-    '<h4>留痕</h4>本次尝试已写入审计日志（' + rec.t + ' · ' + target + '），可在「审计日志」中查看。');
-}
-
-function logout(hint){
-  const s = window.SESSION;
-  if (s) audit('退出登录', '工号 ' + s.id, '令牌已失效');
-  window.SESSION = null;
-  try { sessionStorage.removeItem('cy.session'); } catch (e) {}
-  $('#scopeText').textContent = '未登录';
-  $('#whoAv').textContent = '—';
-  $('#whoName').textContent = '未登录';
-  $('#whoRole').textContent = '请先验证身份';
-  showLogin(hint || '已退出登录，请重新验证身份');
-}
-
-/* ---------- 事件 ---------- */
-$('#lgSub').addEventListener('click', tryLogin);
-$('#lgId').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter'){ e.preventDefault(); $('#lgPw').focus(); }
-});
-$('#lgPw').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter'){ e.preventDefault(); tryLogin(); }
-});
-$('#lgEye').addEventListener('click', function () {
-  const p = $('#lgPw');
-  const on = p.type === 'password';
-  p.type = on ? 'text' : 'password';
-  this.textContent = on ? '隐藏' : '显示';
-});
-$$('.lg-acc').forEach(function (b) {
-  b.addEventListener('click', function () {
-    const id = b.dataset.acc;
-    $('#lgId').value = id;
-    $('#lgPw').value = ACCOUNTS[id].pw;
-    setMsg('已填入演示账号，正在校验…', 'hint');
-    setTimeout(tryLogin, 260);
-  });
-});
-
-$('#whoBtn').addEventListener('click', function (e) {
-  if (e.target.closest('.who-menu')) return;
-  const on = this.classList.toggle('open');
-  this.setAttribute('aria-expanded', on ? 'true' : 'false');
-});
-document.addEventListener('click', function (e) {
-  if (!e.target.closest('#whoBtn')){
-    $('#whoBtn').classList.remove('open');
-    $('#whoBtn').setAttribute('aria-expanded', 'false');
-  }
-});
-$('#miToken').addEventListener('click', openToken);
-$('#miAudit').addEventListener('click', openAudit);
-$('#miProbe').addEventListener('click', openProbe);
-$('#miSwitch').addEventListener('click', function () { logout('已退出当前身份，请选择要切换到的账号'); });
-$('#miOut').addEventListener('click', function () { logout('已退出登录'); });
-
-/* 账号管理 */
-$('#admNew').addEventListener('click', openNewUser);
-document.addEventListener('click', function (e) {
-  const r = e.target.closest('[data-adm-reset]');
-  if (r) { resetPwd(r.dataset.admReset); return; }
-  const t = e.target.closest('[data-adm-toggle]');
-  if (t) { toggleUser(t.dataset.admToggle); }
-});
-
-/* 首次改密 */
-$('#chgOk').addEventListener('click', doChangePwd);
-['#chgP1', '#chgP2'].forEach(function (sel) {
-  $(sel).addEventListener('keydown', function (e) { if (e.key === 'Enter'){ e.preventDefault(); doChangePwd(); } });
-});
-
-/* ---------- 启动：恢复会话或显示登录 ---------- */
-(function boot(){
-  let raw = null;
-  try { raw = sessionStorage.getItem('cy.session'); } catch (e) {}
-  if (raw){
-    try {
-      const s = JSON.parse(raw);
-      if (s && s.exp > Date.now()){
-        window.SESSION = s;
-        $('#login').classList.add('hide');
-        applyRole();
-        audit('会话恢复', '工号 ' + s.id, '令牌仍在有效期 · 免二次验证');
-        if (ACCOUNTS[s.id] && ACCOUNTS[s.id].mustChange) showChg();
-        return;
-      }
-    } catch (e) {}
-    try { sessionStorage.removeItem('cy.session'); } catch (e) {}
-  }
-  showLogin('');
-})();
-</script>
+</script></script>
 </body>
 </html>
