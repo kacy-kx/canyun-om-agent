@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>载运装备运维检测智能体 · 项目汇报</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:#FFFFFF;color:#2C2C2A;
+    font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;}
+  .wrap{max-width:1280px;margin:0 auto;padding:48px 32px 40px;}
+  .head{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+  .head .bar{width:10px;height:38px;border-radius:2px;background:#185FA5;flex:0 0 auto;}
+  h1{font-size:30px;font-weight:700;color:#0C447C;letter-spacing:.5px;}
+  .sub{font-size:15px;color:#5F5E5A;margin:10px 0 34px;line-height:1.7;}
+  .sub b{color:#0C447C;font-weight:600;}
+  .fig{width:100%;}
+  .fig svg{width:100%;height:auto;display:block;}
+  .row{display:flex;gap:16px;margin-top:34px;flex-wrap:wrap;}
+  .card{flex:1 1 300px;border:1px solid #C5D5E5;border-radius:10px;padding:20px 22px;background:#FFFFFF;}
+  .card h3{font-size:16px;font-weight:600;color:#0C447C;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .card h3 .dot{width:8px;height:8px;border-radius:50%;background:#185FA5;flex:0 0 auto;}
+  .card p{font-size:13.5px;color:#444441;line-height:1.8;}
+  .card p b{color:#0C447C;font-weight:600;}
+  .cta{display:inline-block;margin-top:12px;padding:10px 26px;border-radius:8px;
+    background:#185FA5;color:#FFFFFF;font-size:14px;font-weight:600;text-decoration:none;
+    transition:background .15s;}
+  .cta:hover{background:#0C447C;}
+  .note{margin-top:34px;padding:14px 18px;border-radius:8px;background:#E6F1FB;
+    font-size:13px;color:#185FA5;line-height:1.8;}
+  .note b{color:#0C447C;}
+  .foot{margin-top:26px;text-align:center;font-size:12px;color:#8B96A3;}
+  @media (max-width:760px){
+    .wrap{padding:28px 16px 28px;}
+    h1{font-size:22px;}
+    .sub{font-size:13.5px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="bar"></div>
+    <h1>大模型 + 载运装备运维检测智能体</h1>
+  </div>
+  <p class="sub">
+    以「<b>工业控制台 + 对话式智能体</b>」双模架构承载载运装备的运维检测：
+    覆盖<b>看（视觉缺陷识别）· 听（声纹频谱分析）· 算（PHM 剩余寿命预测）</b>三种模态，
+    工单按工序推进、结论必须带证据、写操作只落草稿由人签字——<b>人在回路</b>。
+  </p>
+
+  <div class="fig">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="五层能力架构图">
+    <title>五层能力架构</title>
+    <rect width="1280" height="720" fill="#FFFFFF"/>
+
+    <rect x="60" y="36" width="10" height="36" rx="2" fill="#185FA5"/>
+    <text x="84" y="64" font-size="30" font-weight="700" fill="#0C447C" dominant-baseline="central">五层能力架构</text>
+
+    <rect x="60" y="110" width="120" height="92" rx="10" fill="#185FA5"/>
+    <text x="120" y="156" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="600" fill="#FFFFFF">应用场景</text>
+    <rect x="192" y="110" width="1028" height="92" rx="10" fill="#E6F1FB"/>
+    <g><rect x="208" y="124" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="326" y="156" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">值班监测值守看板</text></g>
+    <g><rect x="461" y="124" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="579" y="156" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">检修工程师智能问答</text></g>
+    <g><rect x="714" y="124" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="832" y="156" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">自动生成检修建议工单</text></g>
+    <g><rect x="967" y="124" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="1085" y="156" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">应急预警与处置建议</text></g>
+
+    <rect x="60" y="216" width="120" height="92" rx="10" fill="#185FA5"/>
+    <text x="120" y="262" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="600" fill="#FFFFFF">智能服务层</text>
+    <rect x="192" y="216" width="1028" height="92" rx="10" fill="#E6F1FB"/>
+    <g><rect x="208" y="230" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="326" y="262" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">部件健康度评估</text></g>
+    <g><rect x="461" y="230" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="579" y="262" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">故障根因分析（RCA）</text></g>
+    <g><rect x="714" y="230" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="832" y="262" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">劣化趋势与寿命预警</text></g>
+    <g><rect x="967" y="230" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="1085" y="262" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">检修方案智能推荐</text></g>
+
+    <rect x="60" y="322" width="120" height="92" rx="10" fill="#3B6D11"/>
+    <text x="120" y="368" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="600" fill="#FFFFFF">AI 核心引擎</text>
+    <rect x="192" y="322" width="1028" height="92" rx="10" fill="#EAF3DE"/>
+    <text x="706" y="360" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="700" fill="#27500A">多模态大模型 × RAG 知识库 × 受限工具调用</text>
+    <text x="493" y="391" text-anchor="middle" dominant-baseline="central" font-size="13" fill="#3B6D11">任务拆解与规划</text>
+    <line x1="565" y1="381" x2="565" y2="399" stroke="#3B6D11" stroke-width="1"/>
+    <text x="638" y="391" text-anchor="middle" dominant-baseline="central" font-size="13" fill="#3B6D11">知识检索增强</text>
+    <line x1="710" y1="381" x2="710" y2="399" stroke="#3B6D11" stroke-width="1"/>
+    <text x="783" y="391" text-anchor="middle" dominant-baseline="central" font-size="13" fill="#3B6D11">受限工具调用</text>
+    <line x1="855" y1="381" x2="855" y2="399" stroke="#3B6D11" stroke-width="1"/>
+    <text x="928" y="391" text-anchor="middle" dominant-baseline="central" font-size="13" fill="#3B6D11">多模态检测融合</text>
+
+    <rect x="60" y="428" width="120" height="92" rx="10" fill="#185FA5"/>
+    <text x="120" y="474" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="600" fill="#FFFFFF">知识资产库</text>
+    <rect x="192" y="428" width="1028" height="92" rx="10" fill="#E6F1FB"/>
+    <g><rect x="208" y="442" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="326" y="474" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">车辆履历与检修记录</text></g>
+    <g><rect x="461" y="442" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="579" y="474" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">检修规程与限度标准</text></g>
+    <g><rect x="714" y="442" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="832" y="474" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">历史故障与处置案例</text></g>
+    <g><rect x="967" y="442" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="1085" y="474" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">班组经验与工法</text></g>
+
+    <rect x="60" y="534" width="120" height="92" rx="10" fill="#185FA5"/>
+    <text x="120" y="580" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="600" fill="#FFFFFF">数据与接入</text>
+    <rect x="192" y="534" width="1028" height="92" rx="10" fill="#E6F1FB"/>
+    <g><rect x="208" y="548" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="326" y="580" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">车载传感器监测数据</text></g>
+    <g><rect x="461" y="548" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="579" y="580" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">机器视觉缺陷识别</text></g>
+    <g><rect x="714" y="548" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="832" y="580" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">声学异响采集</text></g>
+    <g><rect x="967" y="548" width="237" height="64" rx="8" fill="#FFFFFF" stroke="#C5D5E5" stroke-width="1"/><text x="1085" y="580" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="600" fill="#0C447C">检修管理系统 API</text></g>
+
+    <text x="640" y="678" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#8B96A3">每次检测与处置结果回流沉淀进知识库，工单按工序闭环，形成持续进化的反馈闭环</text>
+  </svg>
+  </div>
+
+  <div class="row">
+    <div class="card">
+      <h3><span class="dot"></span>在线原型演示</h3>
+      <p>可直接在浏览器打开的可交互原型：监测看板、视觉/声纹/预测三模态页面、
+      检测任务与工单闭环，全部可点、可拖、可对话。</p>
+      <a class="cta" href="./" target="_self">进入在线原型 →</a>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>三种检测模态</h3>
+      <p><b>看</b>：机器视觉识别踏面裂纹、受电弓磨耗；<b>听</b>：声纹频谱判断轴承故障类型；
+      <b>算</b>：退化曲线外推剩余寿命，提前 3 天预警。</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>人在回路的安全边界</h3>
+      <p>查询类工具只读，写入只落<b>待派发建议单</b>；派单、停机、验收全部由人确认。
+      工单按<b>五道工序</b>推进，每一步可签字、可追溯。</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>演示数据说明：</b>原型当前为前端演示阶段，页面中的传感器数值、识别结果、寿命预测均为内置示例数据，
+    用于验证交互流程与版式；接入真实监测数据源时，前端结构无需改动，仅替换数据接口。
+  </div>
+
+  <p class="foot">载运装备运维检测智能体 · 技术汇报页 · 2026 年 11 月</p>
+</div>
+</body>
+</html>
