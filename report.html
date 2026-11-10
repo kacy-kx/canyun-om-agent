@@ -190,6 +190,10 @@
   .airy .tech-col{padding:26px 26px;}
   .airy .tech-col li{font-size:14px;line-height:2.1;}
 
+  .s13 .card{padding:20px 22px;}
+  .s13 .card h4{font-size:16.5px;margin-bottom:8px;}
+  .s13 .card p{font-size:13.5px;line-height:1.85;}
+
   /* ===== 技术三档 ===== */
   .tech-lane{display:flex;gap:16px;flex:1 1 auto;}
   .tech-col{flex:1;border-radius:10px;padding:18px 20px;border:1px solid var(--line);}
@@ -288,7 +292,7 @@
       <a href="#" data-go="3"><span class="no">01</span><span><span class="t">一、UI 设计</span><div class="d">设计方向 · 四条设计原则 · 现场模式</div></span></a>
       <a href="#" data-go="4"><span class="no">02</span><span><span class="t">二、排版设计</span><div class="d">12 栅格大框架 · 信息密度与字号分类</div></span></a>
       <a href="#" data-go="5"><span class="no">03</span><span><span class="t">三、功能</span><div class="d">监测看板 · 检测三模态 · 智能体交互 · 工单闭环</div></span></a>
-      <a href="#" data-go="6"><span class="no">04</span><span><span class="t">四、技术实现</span><div class="d">五层能力架构 · 三档技术栈</div></span></a>
+      <a href="#" data-go="6"><span class="no">04</span><span><span class="t">四、技术实现</span><div class="d">五层能力架构 · 六项关键技术</div></span></a>
       <a href="#" data-go="7"><span class="no">05</span><span><span class="t">五、演示说明</span><div class="d">数据现状 · 下一步计划</div></span></a>
     </nav>
   </div>
@@ -409,7 +413,7 @@
         <div class="cards" style="grid-template-columns:minmax(0,1fr);">
           <div class="card" style="padding:14px 18px;">
             <h4><span class="num">1</span>全局语音唤醒（支持离线）</h4>
-            <p>"唤醒词 + 指令"两阶段交互：先聆听唤醒词，唤醒后再听指令，如<b>"报告 3 号车厢 2 轴温度异常""调出上个月的维保记录"</b>。麦克风未授权时自动降级为<b>离线指令面板</b>，与真实识别走同一条解析链路。</p>
+            <p>"唤醒词 + 指令"两阶段交互：先聆听唤醒词，唤醒后再听指令，如<b>"报告 3 号车厢 2 轴温度异常""调出上个月的维保记录"</b>。主要靠<b>持续监听</b>唤醒，任意界面也可用左下角麦克风或 <b>Alt+V</b> 呼出（只是保底入口）；麦克风未授权时自动降级为<b>离线指令面板</b>，与真实识别走同一条解析链路。</p>
           </div>
           <div class="card" style="padding:14px 18px;">
             <h4><span class="num">2</span>一键式操作，避免误触</h4>
@@ -644,55 +648,49 @@
   <footer class="s-foot"><span>四、技术实现 · 五层能力架构</span><span class="pn"></span></footer>
 </section>
 
-<!-- S13 三档技术栈 -->
-<section class="slide airy">
+<!-- S13 六项关键技术（内容取自《技术分析.docx》） -->
+<section class="slide airy s13">
   <header class="s-head">
     <span class="s-chap green">四、技术实现</span>
-    <div class="s-title"><div class="bar" style="background:var(--green);"></div><h2>三档技术栈：算法 · 组件 · 设计</h2></div>
-    <p class="s-lead">项目的技术含量分三档：<b>算法/模型</b>（最硬）、<b>现成组件</b>（选型集成）、<b>设计方法</b>（最软但最值钱）。</p>
+    <div class="s-title"><div class="bar" style="background:var(--green);"></div><h2>六项关键技术</h2></div>
+    <p class="s-lead">列进来的都是<b>要真干活的</b>：从听懂人话、查到证据，到算出结论。</p>
   </header>
   <div class="s-body" style="justify-content:center;">
-    <div class="tech-lane">
-      <div class="tech-col t1">
-        <h4>算法 / 模型</h4>
-        <div class="tg">有数学原理，要训练调参——项目的硬技术</div>
-        <ul>
-          <li><b>视觉目标检测</b>（YOLO 类）：踏面裂纹、受电弓磨耗、制动盘缺陷</li>
-          <li><b>声纹频谱分析</b>：FFT、包络谱、轴承特征频率判型</li>
-          <li><b>PHM 寿命预测</b>：退化曲线外推 RUL，提前预警</li>
-          <li><b>缺陷样本标注</b>：框标定 + 数据增强，模型精度的前提</li>
-          <li>模型转 <b>ONNX / TensorRT</b> 部署到边缘 GPU</li>
-        </ul>
+    <div class="cards c3">
+      <div class="card">
+        <h4><span class="num">1</span>大模型（LLM）</h4>
+        <p><b>本地部署开源模型</b>（Qwen，走 vLLM / Ollama）。<br>
+        作用：听懂「3 号车厢 2 轴温度异常」这种<b>模糊的人话</b>，拆成具体诊断步骤，再把振动数据、频谱、规程条款综合成<b>一条带证据的结论</b>。</p>
       </div>
-      <div class="tech-col t2">
-        <h4>现成组件</h4>
-        <div class="tg">别人造好的轮子——选型 + 集成</div>
-        <ul>
-          <li><b>本地大模型</b>（Qwen，vLLM/Ollama）：听懂人话、组织诊断推理</li>
-          <li><b>RAG 知识库</b>（向量库 + 嵌入）：规程、工单、履历，结论必须带引用</li>
-          <li><b>ASR + 唤醒词</b>：「小运小运」两阶段语音交互</li>
-          <li><b>工具调用协议</b>：四个受限工具的注册与调度</li>
-          <li><b>工业协议接入</b>：MQTT / OPC UA 传感器数据</li>
-        </ul>
+      <div class="card">
+        <h4><span class="num">2</span>RAG 知识库</h4>
+        <p><b>检修规程、典型故障案例、历史工单</b>都存进去，推理前先检索。<br>
+        作用：结论必须带引用——说「该换轴承」，就得指出依据是<b>规程第几条、历史哪张工单</b>，不能靠模型想象。</p>
       </div>
-      <div class="tech-col t3">
-        <h4>设计方法</h4>
-        <div class="tg">不用买不用训——把业务流程想清楚就是技术</div>
-        <ul>
-          <li><b>工单状态机</b>：五道工序、字段按工序开放、防跳步防漏签</li>
-          <li><b>受限工具调用</b>：查询只读、写只落草稿</li>
-          <li><b>告警降噪规则</b>：阈值 + 动态基线，不能什么都问大模型</li>
-          <li><b>四条设计原则</b>：状态色只表状态、结论带证据、人在回路</li>
-          <li><b>全程留痕</b>：谁、何时、说了什么、执行了什么，可倒查到人</li>
-          <li>这是最离不开<b>业务理解</b>的部分，证明不是只会调 API</li>
-        </ul>
+      <div class="card">
+        <h4><span class="num">3</span>工具调用</h4>
+        <p>给大模型挂四个工具：<b>sensor.query / rag.search / model.predict</b>（查数据、查手册、算寿命，均只读），<b>ticket.create</b>（开工单，只落草稿）。<br>
+        作用：读随便读，写只写进草稿纸——派单、停机都得<b>人确认</b>，这就是「人在回路」。</p>
       </div>
-    </div>
-    <div class="note-strip amber" style="margin-top:18px;">
-      <b>本地推理 · 在线：</b>模型跑在现场边缘设备上，数据不出段、断网的车库里照样能干活——这是运维现场的现实约束。
+      <div class="card">
+        <h4><span class="num">4</span>检测模型</h4>
+        <p><b>视觉目标检测</b>（YOLO 类）：画面上直接框出踏面裂纹、受电弓磨耗；<br>
+        <b>声纹频谱分析</b>（FFT＋特征频率）：BPFO 线谱是磨损、宽带噪声是缺油，一听就知道哪种病；<br>
+        <b>PHM 寿命预测</b>：退化曲线外推还剩几天到限值，<b>提前 3 天预警</b>。</p>
+      </div>
+      <div class="card">
+        <h4><span class="num">5</span>边缘推理部署</h4>
+        <p><b>ONNX / TensorRT ＋ GPU 盒子</b>，把检测模型打包部署到现场边缘设备。<br>
+        作用：检测在<b>本地跑</b>，数据不出段、<b>断网也能用</b>——这正是运维现场的现实约束。</p>
+      </div>
+      <div class="card">
+        <h4><span class="num">6</span>语音交互</h4>
+        <p><b>ASR ＋ 唤醒词「小运小运」</b>：现场戴着手套、环境嘈杂，没法点屏幕。<br>
+        作用：喊一声就触发对应流程，听不懂的自动<b>转对话兜底</b>——把操作入口从键鼠<b>换成嘴</b>。</p>
+      </div>
     </div>
   </div>
-  <footer class="s-foot"><span>四、技术实现 · 三档技术栈</span><span class="pn"></span></footer>
+  <footer class="s-foot"><span>四、技术实现 · 六项关键技术</span><span class="pn"></span></footer>
 </section>
 
 <!-- S14 演示说明与下一步 -->
